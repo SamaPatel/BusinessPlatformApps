@@ -76,7 +76,7 @@ export class SqlServer extends ViewModelBase {
 
     onAuthChange(): void {
         this.isWindowsAuth = this.auth.toLowerCase() === 'windows';
-        if (this.isWindowsAuth) {
+        if (!this.isAzureSql && !this.hideSqlAuth && this.isWindowsAuth) {
             this.username = '';
             this.password = '';
         }

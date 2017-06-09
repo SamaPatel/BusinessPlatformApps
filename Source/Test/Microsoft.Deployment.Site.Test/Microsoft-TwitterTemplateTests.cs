@@ -14,7 +14,7 @@ namespace Microsoft.Deployment.Site.Web.Tests
     [TestClass]
     public class TwitterTemplateTests
     {
-        private string baseURL = Constants.Slot1;
+        private string baseURL = Constants.Slot3;
         private RemoteWebDriver driver;
 
         [TestMethod]
