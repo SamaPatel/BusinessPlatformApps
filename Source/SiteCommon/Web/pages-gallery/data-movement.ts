@@ -38,21 +38,30 @@ export class DataMovement extends ViewModelBase {
     }
 
     async OnScribeOrganizationChanged(): Promise<void> {
-        this.MS.DataStore.addToDataStore('ScribeOrganizationId', this.scribeOrganizationId, DataStoreType.Private);
+        if (this.MS.HttpService.isOnPremise) {
+            this.MS.DataStore.addToDataStore('ScribeOrganizationId', this.scribeOrganizationId, DataStoreType.Private);
 
-        let responseScribeAgents: ActionResponse = await this.MS.HttpService.executeAsync('Microsoft-GetScribeAgents');
+            let responseScribeAgents: ActionResponse = await this.MS.HttpService.executeAsync('Microsoft-GetScribeAgents');
 
-        if (responseScribeAgents.IsSuccess) {
-            this.scribeAgents = JSON.parse(responseScribeAgents.Body.value);
+            if (responseScribeAgents.IsSuccess) {
+                let scribeAgents: ScribeAgent[] = JSON.parse(responseScribeAgents.Body.value);
 
-            if (this.scribeAgents && this.scribeAgents.length > 0) {
-                this.scribeAgentId = this.scribeAgents[0].id;
-                this.isValidated = true;
-                this.showValidation = true;
-            } else {
-                let responseScribeAgentInstall: ActionResponse = await this.MS.HttpService.executeAsync('Microsoft-GetScribeAgentInstall');
-                if (responseScribeAgentInstall.IsSuccess) {
-                    this.scribeAgentInstall = JSON.parse(responseScribeAgentInstall.Body.value);
+                for (let i = 0; i < scribeAgents.length; i++) {
+                    let scribeAgent: ScribeAgent = scribeAgents[i];
+                    if (!scribeAgent.isCloudAgent) {
+                        this.scribeAgents.push(scribeAgent);
+                    }
+                }
+
+                if (this.scribeAgents && this.scribeAgents.length > 0) {
+                    this.scribeAgentId = this.scribeAgents[0].id;
+                    this.isValidated = true;
+                    this.showValidation = true;
+                } else {
+                    let responseScribeAgentInstall: ActionResponse = await this.MS.HttpService.executeAsync('Microsoft-GetScribeAgentInstall');
+                    if (responseScribeAgentInstall.IsSuccess) {
+                        this.scribeAgentInstall = JSON.parse(responseScribeAgentInstall.Body.value);
+                    }
                 }
             }
         }

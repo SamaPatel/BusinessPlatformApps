@@ -138,6 +138,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AzureTests\AzureAnalysisServicesTest.cs" />
+    <Compile Include="AzureTests\AzureStorageTests.cs" />
     <Compile Include="AzureTests\AzureFunctionsTest.cs" />
     <Compile Include="AzureTests\ConnectorTest.cs" />
     <Compile Include="AzureTests\AzureMLTest.cs" />

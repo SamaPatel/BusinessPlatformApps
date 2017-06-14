@@ -53,3 +53,4 @@
 *.user
 *js.map
 /Source/SiteCommon/Web/**/*.js
+*.pubxml

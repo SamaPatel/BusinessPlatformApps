@@ -47,8 +47,16 @@ namespace Microsoft.Deployment.Site.Web.Tests
             {
                 //if the delete DB fails, then the test probably failed to create
             }
-
-            HelperMethods.driver.Quit();
+            try
+            {
+                HelperMethods.driver.Quit();
+            }
+            catch
+            {
+                //if we can't quit the driver, probably the process started and failed.  Cleanup so the next test doesn't get messed up
+                var driver = Process.GetProcessesByName("chromedriver.exe");
+                driver[0].Kill();
+            }
         }
 
         [TestMethod]
@@ -59,9 +67,21 @@ namespace Microsoft.Deployment.Site.Web.Tests
             OpenWebBrowser();
             HelperMethods.driver = this.driver;
             HelperMethods.WaitForPage();
-            HelperMethods.CreateDatabase(Credential.Instance.Sql.Server,
+            try
+            {
+                HelperMethods.CreateDatabase(Credential.Instance.Sql.Server,
                                             Credential.Instance.Sql.Username, Credential.Instance.Sql.Password,
                                             Credential.Instance.Sql.SCCMDatabase);
+            }
+            catch
+            {
+                HelperMethods.DeleteDatabase(Credential.Instance.Sql.Server,
+                                            Credential.Instance.Sql.Username, Credential.Instance.Sql.Password,
+                                            Credential.Instance.Sql.SCCMDatabase);
+                HelperMethods.CreateDatabase(Credential.Instance.Sql.Server,
+                                            Credential.Instance.Sql.Username, Credential.Instance.Sql.Password,
+                                            Credential.Instance.Sql.SCCMDatabase);
+            }
             try
             {
                 var background = driver.FindElementByCssSelector("div[class='st-email-background st-email-wrapper au-target']");
@@ -335,6 +355,7 @@ namespace Microsoft.Deployment.Site.Web.Tests
             ChromeOptions options = new ChromeOptions();
             options.BinaryLocation = msiPath;
             options.AddArgument("?name=Microsoft-SCCMTemplate");
+            options.AddUserProfilePreference("profile.password_manager_enabled", false);
             driver = new ChromeDriver(options);
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(30);
         }

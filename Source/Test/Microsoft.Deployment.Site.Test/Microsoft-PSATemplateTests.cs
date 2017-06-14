@@ -20,10 +20,6 @@ namespace Microsoft.Deployment.Site.Web.Tests
         [TestMethod]
         public void Given_CorrectInformation_And_AS_When_RunPSA_ThenSuccess()
         {
-
-            HelperMethods.CreateDatabase(Credential.Instance.Sql.Server,
-                        Credential.Instance.Sql.Username, Credential.Instance.Sql.Password,
-                        Credential.Instance.Sql.PSADatabase);
             Given_CorrectCredentials_When_Dynam365Auth_Then_Success();
             Thread.Sleep(new TimeSpan(0, 0, 5));
             HelperMethods.ClickButton("Next");
@@ -149,8 +145,25 @@ namespace Microsoft.Deployment.Site.Web.Tests
             HelperMethods.baseURL = baseURL + "?name=Microsoft-PSA";
             var options = new ChromeOptions();
             options.AddArgument("no-sandbox");
+            options.AddUserProfilePreference("profile.password_manager_enabled", false);
             HelperMethods.driver = new ChromeDriver(options);
             this.driver = HelperMethods.driver;
+            try
+            {
+                HelperMethods.CreateDatabase(Credential.Instance.Sql.Server,
+                    Credential.Instance.Sql.Username, Credential.Instance.Sql.Password,
+                    Credential.Instance.Sql.PSADatabase);
+            }
+            catch
+            {
+                HelperMethods.DeleteDatabase(Credential.Instance.Sql.Server,
+                    Credential.Instance.Sql.Username, Credential.Instance.Sql.Password,
+                    Credential.Instance.Sql.PSADatabase);
+                HelperMethods.CreateDatabase(Credential.Instance.Sql.Server,
+                    Credential.Instance.Sql.Username, Credential.Instance.Sql.Password,
+                    Credential.Instance.Sql.PSADatabase);
+            }
+
         }
     }
 }

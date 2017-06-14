@@ -26,5 +26,23 @@ namespace Microsoft.Deployment.Tests.Actions.AzureTests
             var response = await TestManager.ExecuteActionAsync("Microsoft-RegisterCognitiveServices", dataStore);
             Assert.IsTrue(response.Status == ActionStatus.Success);
         }
+
+        [TestMethod]
+        public async Task ValidateCognitiveServiceCreation()
+        {
+            var dataStore = await TestManager.GetDataStore();
+            dataStore.AddToDataStore("DeploymentName", "FunctionDeploymentTes");
+            dataStore.AddToDataStore("CognitiveServiceName", "TextCognitiveService");
+            dataStore.AddToDataStore("CognitiveServiceType", "TextAnalytics");
+            dataStore.AddToDataStore("CognitiveSkuName", "S1");
+            var response = TestManager.ExecuteAction("Microsoft-DeployCognitiveService", dataStore);
+            Assert.IsTrue(response.IsSuccess);
+
+            response = TestManager.ExecuteAction("Microsoft-GetCognitiveKey", dataStore);
+            Assert.IsTrue(response.IsSuccess);
+
+            response = await TestManager.ExecuteActionAsync("Microsoft-WaitForCognitiveService", dataStore, "Microsoft-FacebookTemplate");
+            Assert.IsTrue(response.IsSuccess);
+        }
     }
 }

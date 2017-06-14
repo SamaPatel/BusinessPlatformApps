@@ -28,5 +28,14 @@ namespace Microsoft.Deployment.Tests.Actions.AzureTests
 
             Assert.IsTrue(response.IsSuccess);
         }
+
+        [TestMethod]
+        public async Task ForceRun()
+        {
+            var dataStore = await TestManager.GetDataStore();
+            dataStore.AddToDataStore("LogicAppName", "GetHistoryForFacebookPages");
+            var response = TestManager.ExecuteAction("Microsoft-ForceRunLogicApp", dataStore);
+            Assert.IsTrue(response.IsSuccess);
+        }
     }
 }

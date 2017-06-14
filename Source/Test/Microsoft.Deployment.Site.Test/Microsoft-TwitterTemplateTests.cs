@@ -14,7 +14,7 @@ namespace Microsoft.Deployment.Site.Web.Tests
     [TestClass]
     public class TwitterTemplateTests
     {
-        private string baseURL = Constants.Slot3;
+        private string baseURL = Constants.Slot1;
         private RemoteWebDriver driver;
 
         [TestMethod]
@@ -23,6 +23,9 @@ namespace Microsoft.Deployment.Site.Web.Tests
             Given_CorrectCredentials_When_AzureAuth_Then_Success();
             Thread.Sleep(new TimeSpan(0, 0, 5));
             HelperMethods.ClickButton("Next");
+            HelperMethods.WaitForPage();
+            ConnectToCognitiveServices();
+            HelperMethods.WaitForPage();
             Given_CorrectSqlCredentials_When_ExistingSqlSelected_Then_PageValidatesSuccessfully();
             HelperMethods.WaitForPage();
             HelperMethods.ClickButton("Next");
@@ -36,6 +39,7 @@ namespace Microsoft.Deployment.Site.Web.Tests
             HelperMethods.ClickButton("Next");
             HelperMethods.NewAnalysisServices("twitteraas" + HelperMethods.resourceGroupName, Credential.Instance.ServiceAccount.Username, Credential.Instance.ServiceAccount.Password);
             HelperMethods.ClickButton("Next");
+            HelperMethods.WaitForPage();
             HelperMethods.ClickButton("Run");
             HelperMethods.CheckDeploymentStatus();
 
@@ -56,6 +60,7 @@ namespace Microsoft.Deployment.Site.Web.Tests
             HelperMethods.ClickButton("Next");
             HelperMethods.WaitForPage();
             ConnectToCognitiveServices();
+            HelperMethods.WaitForPage();
             Given_CorrectSqlCredentials_When_ExistingSqlSelected_Then_PageValidatesSuccessfully();
             HelperMethods.WaitForPage();
             HelperMethods.ClickButton("Next");
@@ -114,7 +119,6 @@ namespace Microsoft.Deployment.Site.Web.Tests
 
         public void ConnectToCognitiveServices()
         {
-
             var checkBox = driver.FindElementsByCssSelector("input[class='au-target']").First(e => e.GetAttribute("type") == "checkbox");
             var js = (IJavaScriptExecutor)driver;
             js.ExecuteScript("arguments[0].click()", checkBox);
@@ -142,6 +146,7 @@ namespace Microsoft.Deployment.Site.Web.Tests
         public void Given_CorrectSearchTerms_When_Validating_Then_Success()
         {
             HelperMethods.OpenWebBrowserOnPage("searchterms");
+            Thread.Sleep(new TimeSpan(0, 0, 2));
             string searchTerms = "@MSPowerBI OR Azure";
 
             var searchTermsInput = driver.FindElementByCssSelector("input[class='st-input au-target']");
@@ -152,9 +157,9 @@ namespace Microsoft.Deployment.Site.Web.Tests
             }
 
             searchTermsInput.SendKeys(searchTerms);
-
+            Thread.Sleep(new TimeSpan(0, 0, 2));
             HelperMethods.ClickButton("Validate");
-
+            Thread.Sleep(new TimeSpan(0, 0, 2));
             var validated = driver.FindElementByClassName("st-validated");
 
             Assert.IsTrue(validated.Text == "Successfully validated");
@@ -214,6 +219,7 @@ namespace Microsoft.Deployment.Site.Web.Tests
             HelperMethods.baseURL = baseURL + "?name=Microsoft-TwitterTemplate";
             var options = new ChromeOptions();
             options.AddArgument("no-sandbox");
+            options.AddUserProfilePreference("profile.password_manager_enabled", false);
             HelperMethods.driver = new ChromeDriver(options);
             this.driver = HelperMethods.driver;
             try

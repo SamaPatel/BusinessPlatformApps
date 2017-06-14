@@ -70,16 +70,20 @@ export class SqlServer extends ViewModelBase {
         super.Invalidate();
         this.database = null;
         this.databases = [];
-        this.onAuthChange();
         this.showDatabases = false;
     }
 
     onAuthChange(): void {
-        this.isWindowsAuth = this.auth.toLowerCase() === 'windows';
-        if (!this.isAzureSql && !this.hideSqlAuth && this.isWindowsAuth) {
-            this.username = '';
-            this.password = '';
+        this.database = null;
+        this.databases = [];
+        this.showDatabases = false;
+        if(this.auth === 'SQL Server'){
+            this.isWindowsAuth = false;
+        } else {
+            this.isWindowsAuth=true;
         }
+        this.username = '';
+        this.password = '';
     } 
 
     async OnValidate(): Promise<boolean> {

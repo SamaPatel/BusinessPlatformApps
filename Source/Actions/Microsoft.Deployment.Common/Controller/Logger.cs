@@ -135,7 +135,7 @@ namespace Microsoft.Deployment.Common.Controller
 
         public void Flush()
         {
-            this.telemetryClient.Flush();
+            //this.telemetryClient.Flush();
         }
 
         public void AddTraceId(string traceId)

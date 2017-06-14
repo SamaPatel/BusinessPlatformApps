@@ -16,7 +16,7 @@ namespace Microsoft.Deployment.Tests.Actions.TestHelpers
     public class TestManager
     {
         public static string RandomString = RandomGenerator.GetRandomLowerCaseCharacters(8);
-        public static string ResourceGroup = Environment.MachineName.ToLower() + "test";
+        public static string ResourceGroup = Environment.MachineName.ToLower() + "-modemo";
 
         private static CommonController Controller { get; set; }
         public static string TemplateName = "Microsoft-NewsTemplateTest";
@@ -68,7 +68,6 @@ namespace Microsoft.Deployment.Tests.Actions.TestHelpers
             dataStore.AddToDataStore("SelectedResourceGroup", ResourceGroup);
 
             var resourceGroupResult = await TestManager.ExecuteActionAsync("Microsoft-CreateResourceGroup", dataStore);
-            Assert.IsTrue(resourceGroupResult.IsSuccess);
 
             System.IO.File.WriteAllText("datastore.json", JsonUtility.GetJObjectFromObject(dataStore).ToString());
             return dataStore;

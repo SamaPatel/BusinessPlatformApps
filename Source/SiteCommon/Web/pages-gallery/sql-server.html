@@ -30,7 +30,7 @@
                 <span>${MS.Translate.SQL_SERVER_AUTHENTICATION}</span>
                 <span class="glyphicon pbi-glyph-info glyph-mini st-tooltip" title="${MS.Translate.SQL_SERVER_IMPERSONATION}" if.bind="auth == 'Windows' && MS.UtilityService.UseImpersonation()"></span>
             </p>
-            <select class="btn btn-default dropdown-toggle st-input" change.delegate="Invalidate()" disabled.bind="MS.HttpService.isServiceBusy" value.bind="auth">
+            <select class="btn btn-default dropdown-toggle st-input" change.delegate="onAuthChange()" disabled.bind="MS.HttpService.isServiceBusy" value.bind="auth">
                 <option>Windows</option>
                 <option>SQL Server</option>
             </select>

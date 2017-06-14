@@ -27,10 +27,13 @@ namespace Microsoft.Deployment.Actions.AzureCustom.Common
             if (response.IsSuccessStatusCode)
             {
                 var subscriptionKeys = JsonUtility.GetJObjectFromJsonString(await response.Content.ReadAsStringAsync());
-            
+                string key = subscriptionKeys["keys"][0]["value"].ToString();
+                string connectionString = $"DefaultEndpointsProtocol=https;AccountName={storageAccountName};AccountKey={key};EndpointSuffix=core.windows.net";
                 JObject newStorageAccountKey = new JObject();
-                newStorageAccountKey.Add("StorageAccountKey", subscriptionKeys["keys"][0]["value"].ToString());
-                request.DataStore.AddToDataStore("StorageAccountKey", subscriptionKeys["keys"][0]["value"].ToString());
+                newStorageAccountKey.Add("StorageAccountKey", key);
+                newStorageAccountKey.Add("StorageAccountConnectionString", connectionString);
+                request.DataStore.AddToDataStore("StorageAccountKey", key);
+                request.DataStore.AddToDataStore("StorageAccountConnectionString", connectionString);
                 return new ActionResponse(ActionStatus.Success, newStorageAccountKey, true);
             }
 

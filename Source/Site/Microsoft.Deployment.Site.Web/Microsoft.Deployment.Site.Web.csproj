@@ -14,11 +14,14 @@
     <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net45+win8</PackageTargetFallback>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
-    <PreBuildEvent>call gulp.cmd pre-build
-call gulp.cmd strip-typescript-reference-paths
-</PreBuildEvent>
-    <PostBuildEvent>call gulp.cmd build-typescript
-call gulp.cmd post-build</PostBuildEvent>
+    <PreBuildEvent>IF "%IS_TEAM_CITY%" == "y" (
+    call gulp.cmd pre-build
+    call gulp.cmd strip-typescript-reference-paths
+)</PreBuildEvent>
+    <PostBuildEvent>IF "%IS_TEAM_CITY%" == "y" (
+    call gulp.cmd build-typescript
+    call gulp.cmd post-build
+)</PostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>

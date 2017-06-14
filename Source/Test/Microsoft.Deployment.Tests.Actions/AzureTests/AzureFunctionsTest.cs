@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Deployment.Tests.Actions.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Deployment.Tests.Actions.AzureTests
 {
@@ -12,7 +13,7 @@ namespace Microsoft.Deployment.Tests.Actions.AzureTests
     public class AzureFunctionsTest
     {
         [TestMethod]
-        public async Task CreateAzureFunction()
+        public async Task CreateAzureFunctionAndDeployConnectionString()
         {
             var dataStore = await TestManager.GetDataStore();
 
@@ -21,11 +22,35 @@ namespace Microsoft.Deployment.Tests.Actions.AzureTests
             dataStore.AddToDataStore("FunctionName", "unittestfunction6");
             dataStore.AddToDataStore("RepoUrl", "https://github.com/MohaaliMicrosoft/AnalysisServicesRefresh");
             dataStore.AddToDataStore("sku", "Standard");
+            
 
-            var response = TestManager.ExecuteAction("Microsoft-DeployAzureFunction", dataStore);
+            //var response = TestManager.ExecuteAction("Microsoft-DeployAzureFunction", dataStore);
+            //Assert.IsTrue(response.IsSuccess);
+            //response = TestManager.ExecuteAction("Microsoft-WaitForArmDeploymentStatus", dataStore);
+            //Assert.IsTrue(response.IsSuccess);
+
+            //// Deploy Function
+            dataStore.AddToDataStore("DeploymentName", "FunctionDeploymentTest");
+            dataStore.AddToDataStore("StorageAccountName", "testmostorage1234");
+            dataStore.AddToDataStore("StorageAccountType", "Standard_LRS");
+            dataStore.AddToDataStore("StorageAccountEncryptionEnabled", "true");
+
+            //var response = TestManager.ExecuteAction("Microsoft-CreateAzureStorageAccount", dataStore);
+            //Assert.IsTrue(response.IsSuccess);
+            //response = TestManager.ExecuteAction("Microsoft-WaitForArmDeploymentStatus", dataStore);
+            //Assert.IsTrue(response.IsSuccess);
+
+            var response = TestManager.ExecuteAction("Microsoft-GetStorageAccountKey", dataStore);
             Assert.IsTrue(response.IsSuccess);
-            response = TestManager.ExecuteAction("Microsoft-WaitForArmDeploymentStatus", dataStore);
+
+            JObject val = new JObject();
+            val.Add("queue", dataStore.GetValue("StorageAccountConnectionString"));
+            dataStore.AddToDataStore("AppSettingKeys", val);
+
+            response = TestManager.ExecuteAction("Microsoft-DeployAzureFunctionAppSettings", dataStore);
             Assert.IsTrue(response.IsSuccess);
+
+
         }
 
 

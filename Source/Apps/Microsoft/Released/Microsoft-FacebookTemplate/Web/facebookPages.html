@@ -1,0 +1,16 @@
+﻿<template>
+    <h1 class="st-title">Facebook Pages</h1>
+    <p class="st-subtitle">Enter in the pages you wish to follow</p>
+    <p>
+        Page names should not have any spaces and can be searched on Facebook.com. to follow more than one page use commas
+    </p>
+
+    <div class="st-float">
+        <p class="st-text">Facebook Pages to follow</p>
+        <input class="st-input" type="text" placeholder="Microsoft,microsoftdesign" change.delegate="viewmodel.Invalidate()" disabled.bind="MS.HttpService.isServiceBusy" value.bind="viewmodel.searchQuery" />
+    </div>
+
+    <p class="st-float">
+        <button class="primary" click.trigger="viewmodel.OnValidate()" if.bind="!MS.HttpService.isServiceBusy">${MS.Translate.COMMON_VALIDATE}</button>
+    </p>
+</template>
