@@ -1,17 +1,17 @@
-﻿using Microsoft.Deployment.Common.Actions;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Deployment.Common.ActionModel;
-using Microsoft.Azure;
-using Microsoft.Azure.Management.Resources;
 using System.Dynamic;
 using System.Net.Http;
-using Microsoft.Deployment.Common.Helpers;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Microsoft.Azure;
+using Microsoft.Azure.Management.Resources;
+
+using Microsoft.Deployment.Common.Actions;
+using Microsoft.Deployment.Common.ActionModel;
 using Microsoft.Deployment.Common.ErrorCode;
+using Microsoft.Deployment.Common.Helpers;
 
 namespace Microsoft.Deployment.Actions.AzureCustom
 {
@@ -54,6 +54,16 @@ namespace Microsoft.Deployment.Actions.AzureCustom
                 $"/providers/Microsoft.Web/connections/{connectionName}", "2016-06-01", JsonUtility.GetJsonStringFromObject(payload));
 
             var output = await connection.Content.ReadAsStringAsync();
+
+            var objOutput = JsonUtility.GetJObjectFromJsonString(output);
+            
+            // Retry one more time if initial deployment didn't succeed
+            if (objOutput["code"] != null && objOutput["code"].ToString() == "SubscriptionNotFound")
+            {
+                Thread.Sleep(new TimeSpan(0, 0, 5));
+                connection = await new AzureHttpClient(azureToken, subscription, resourceGroup).ExecuteWithSubscriptionAndResourceGroupAsync(HttpMethod.Put,
+                                $"/providers/Microsoft.Web/connections/{connectionName}", "2016-06-01", JsonUtility.GetJsonStringFromObject(payload));
+            }
 
             if (!connection.IsSuccessStatusCode)
             {

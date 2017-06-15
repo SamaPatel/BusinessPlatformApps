@@ -17,7 +17,7 @@ export class Customize extends ViewModelBase {
         let targetDatabase = this.MS.DataStore.getAllValues('Database')[1];
 
         this.MS.DataStore.addToDataStore('TaskDescription', 'Power BI Solution Template - SCCM', DataStoreType.Public);
-        this.MS.DataStore.addToDataStore('TaskFile', 'dataload.ps1', DataStoreType.Public);
+        this.MS.DataStore.addToDataStore('TaskFile', 'dataload_signed.ps1', DataStoreType.Public);
         this.MS.DataStore.addToDataStore('TaskName', 'Power BI Solution Template - SCCM', DataStoreType.Public);
         this.MS.DataStore.addToDataStore('TaskParameters', `-SourceServer "${sourceServer}" -SourceDatabase "${sourceDatabase}" -DestinationServer "${targetServer}" -DestinationDatabase "${targetDatabase}"`, DataStoreType.Public);
         this.MS.DataStore.addToDataStore('TaskProgram', 'powershell', DataStoreType.Public);
