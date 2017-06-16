@@ -6,6 +6,8 @@ using Microsoft.Deployment.Common.ActionModel;
 using Microsoft.Deployment.Common.Actions;
 using Microsoft.Deployment.Common.Helpers;
 
+using Trinet.Core.IO.Ntfs;
+
 namespace Microsoft.Deployment.Actions.Custom.SCCM
 {
     [Export(typeof(IAction))]
@@ -36,6 +38,14 @@ namespace Microsoft.Deployment.Actions.Custom.SCCM
             {
                 string temppath = Path.Combine(destDirName, currentFile.Name);
                 currentFile.CopyTo(temppath, true);
+                FileInfo destination = new FileInfo(temppath);
+                try
+                {
+                    if (destination.AlternateDataStreamExists("Zone.Identifier"))
+                        destination.DeleteAlternateDataStream("Zone.Identifier");
+                }
+                catch { }
+               
             });
 
             // If copying subdirectories, copy them and their contents to new location.
