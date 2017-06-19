@@ -1,0 +1,1606 @@
+{
+  "create": {
+    "database": {
+      "name": "SalesManagement",
+      "compatibilityLevel": 1200,
+      "model": {
+        "culture": "en-US",
+        "dataSources": [
+          {
+            "name": "ST_DS",
+            "connectionString": "Provider=SQLNCLI11;Data Source=tcp:a.database.windows.net;Persist Security Info=False;User ID=pbiadmin;Initial Catalog=SMDB",
+            "impersonationMode": "impersonateServiceAccount",
+            "annotations": [
+              {
+                "name": "ConnectionEditUISource",
+                "value": "SqlServer"
+              }
+            ]
+          }
+        ],
+        "tables": [
+          {
+            "name": "Account",
+            "columns": [
+              {
+                "name": "Account Id",
+                "dataType": "string",
+                "sourceColumn": "Account Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Account Name",
+                "dataType": "string",
+                "sourceColumn": "Account Name",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Owner Id",
+                "dataType": "string",
+                "isHidden": true,
+                "sourceColumn": "Owner Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Territory Id",
+                "dataType": "string",
+                "isHidden": true,
+                "sourceColumn": "Territory Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Industry",
+                "dataType": "string",
+                "sourceColumn": "Industry",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Business Unit Id",
+                "dataType": "string",
+                "isHidden": true,
+                "sourceColumn": "Business Unit Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "City",
+                "dataType": "string",
+                "sourceColumn": "City",
+                "sourceProviderType": "WChar",
+                "dataCategory": "City"
+              },
+              {
+                "name": "State",
+                "dataType": "string",
+                "sourceColumn": "State",
+                "sourceProviderType": "WChar",
+                "dataCategory": "StateOrProvince"
+              },
+              {
+                "name": "Country",
+                "dataType": "string",
+                "sourceColumn": "Country",
+                "sourceProviderType": "WChar",
+                "dataCategory": "Country"
+              },
+              {
+                "type": "calculated",
+                "name": "Account Link",
+                "dataType": "string",
+                "isDataTypeInferred": true,
+                "expression": [
+                  " if( 'Calculations'[LinksSupported],",
+                  "                           [BaseURL] & ",
+                  "                           if([SourceApplication]=\"DynamicsCRM\",",
+                  "                                         \"/main.aspx?etn=account&id=\" & 'Account'[Account ID] & \"&pagetype=entityrecord\",",
+                  "                                         if([SourceApplication]=\"Salesforce\", \"/\" & 'Account'[Account ID], blank())",
+                  "                           ), BLANK()",
+                  "                           )"
+                ],
+                "dataCategory": "WebUrl"
+              },
+              {
+                "type": "calculated",
+                "name": "Location",
+                "dataType": "string",
+                "isDataTypeInferred": true,
+                "expression": " Account[Country] & \",\" & Account[City]"
+              }
+            ],
+            "partitions": [
+              {
+                "name": "accountview",
+                "dataView": "full",
+                "source": {
+                  "query": " SELECT [smgt].[accountview].* FROM [smgt].[accountview] ",
+                  "dataSource": "ST_DS"
+                }
+              }
+            ],
+            "annotations": [
+              {
+                "name": "_TM_ExtProp_QueryDefinition",
+                "value": " SELECT [smgt].[accountview].* FROM [smgt].[accountview] "
+              },
+              {
+                "name": "_TM_ExtProp_DbTableName",
+                "value": "accountview"
+              },
+              {
+                "name": "_TM_ExtProp_DbSchemaName",
+                "value": "smgt"
+              }
+            ]
+          },
+          {
+            "name": "Configuration",
+            "isHidden": true,
+            "columns": [
+              {
+                "name": "id",
+                "dataType": "int64",
+                "sourceColumn": "id",
+                "sourceProviderType": "Integer"
+              },
+              {
+                "name": "Configuration Group",
+                "dataType": "string",
+                "sourceColumn": "Configuration Group",
+                "sourceProviderType": "Char"
+              },
+              {
+                "name": "Configuration Subgroup",
+                "dataType": "string",
+                "sourceColumn": "Configuration Subgroup",
+                "sourceProviderType": "Char"
+              },
+              {
+                "name": "Name",
+                "dataType": "string",
+                "sourceColumn": "Name",
+                "sourceProviderType": "Char"
+              },
+              {
+                "name": "Value",
+                "dataType": "string",
+                "sourceColumn": "Value",
+                "sourceProviderType": "Char"
+              }
+            ],
+            "partitions": [
+              {
+                "name": "configurationview",
+                "dataView": "full",
+                "source": {
+                  "query": " SELECT [smgt].[configurationview].* FROM [smgt].[configurationview] ",
+                  "dataSource": "ST_DS"
+                }
+              }
+            ],
+            "annotations": [
+              {
+                "name": "_TM_ExtProp_QueryDefinition",
+                "value": " SELECT [smgt].[configurationview].* FROM [smgt].[configurationview] "
+              },
+              {
+                "name": "_TM_ExtProp_DbTableName",
+                "value": "configurationview"
+              },
+              {
+                "name": "_TM_ExtProp_DbSchemaName",
+                "value": "smgt"
+              }
+            ]
+          },
+          {
+            "name": "Dates",
+            "columns": [
+              {
+                "name": "date_key",
+                "dataType": "int64",
+                "isKey": true,
+                "sourceColumn": "date_key",
+                "sourceProviderType": "Integer"
+              },
+              {
+                "name": "Date",
+                "dataType": "dateTime",
+                "sourceColumn": "Date",
+                "formatString": "General Date",
+                "sourceProviderType": "DBDate"
+              },
+              {
+                "name": "Day of the Week",
+                "dataType": "int64",
+                "sourceColumn": "Day of the Week",
+                "sourceProviderType": "UnsignedTinyInt"
+              },
+              {
+                "name": "Day Number of the Month",
+                "dataType": "int64",
+                "sourceColumn": "Day Number of the Month",
+                "sourceProviderType": "UnsignedTinyInt"
+              },
+              {
+                "name": "Day Name",
+                "dataType": "string",
+                "sourceColumn": "Day Name",
+                "sourceProviderType": "Char"
+              },
+              {
+                "name": "Day Abbreviated",
+                "dataType": "string",
+                "sourceColumn": "Day Abbreviated",
+                "sourceProviderType": "Char"
+              },
+              {
+                "name": "Weekday Flag",
+                "dataType": "string",
+                "sourceColumn": "Weekday Flag",
+                "sourceProviderType": "Char"
+              },
+              {
+                "name": "month",
+                "dataType": "int64",
+                "sourceColumn": "month",
+                "sourceProviderType": "UnsignedTinyInt"
+              },
+              {
+                "name": "Month Name",
+                "dataType": "string",
+                "sourceColumn": "Month Name",
+                "sourceProviderType": "Char"
+              },
+              {
+                "name": "month_abbrev",
+                "dataType": "string",
+                "sourceColumn": "month_abbrev",
+                "sourceProviderType": "Char"
+              },
+              {
+                "name": "quarter",
+                "dataType": "int64",
+                "sourceColumn": "quarter",
+                "sourceProviderType": "UnsignedTinyInt"
+              },
+              {
+                "name": "year",
+                "dataType": "int64",
+                "sourceColumn": "year",
+                "sourceProviderType": "SmallInt"
+              },
+              {
+                "name": "same_day_year_ago_date",
+                "dataType": "dateTime",
+                "sourceColumn": "same_day_year_ago_date",
+                "formatString": "General Date",
+                "sourceProviderType": "DBDate"
+              },
+              {
+                "name": "Week Begin Date",
+                "dataType": "dateTime",
+                "sourceColumn": "Week Begin Date",
+                "formatString": "General Date",
+                "sourceProviderType": "DBDate"
+              },
+              {
+                "type": "calculated",
+                "name": "Fiscal Day Number",
+                "dataType": "double",
+                "isDataTypeInferred": true,
+                "expression": " 1. * Dates[Date] - Dates[FiscalStartDate] + 1"
+              },
+              {
+                "type": "calculated",
+                "name": "Fiscal Month Name",
+                "dataType": "string",
+                "isDataTypeInferred": true,
+                "expression": " Dates[Month Name]"
+              },
+              {
+                "type": "calculated",
+                "name": "Fiscal Month Number",
+                "dataType": "double",
+                "isDataTypeInferred": true,
+                "expression": " if([FiscalMonthStart] > Dates[month], 13 - [FiscalMonthStart] + Dates[month], dates[month] - [FiscalMonthStart] + 1)"
+              },
+              {
+                "type": "calculated",
+                "name": "Fiscal Quarter",
+                "dataType": "string",
+                "isDataTypeInferred": true,
+                "expression": " CONCATENATE(CONCATENATE(CONCATENATE(\"FY\", RIGHT(Dates[Fiscal Year],2)) , \" \"),CONCATENATE(\"Q\",Dates[Fiscal Quarter Number]))"
+              },
+              {
+                "type": "calculated",
+                "name": "Fiscal Quarter Number",
+                "dataType": "int64",
+                "isDataTypeInferred": true,
+                "expression": " IF([Fiscal Month Number] >= 1 && [Fiscal Month Number] <= 3, 1, IF([Fiscal Month Number] >= 4 && [Fiscal Month Number] <= 6, 2, IF([Fiscal Month Number] >= 7 && [Fiscal Month Number] <= 9, 3, IF([Fiscal Month Number] >= 10 && [Fiscal Month Number] <= 12,4,0))))"
+              },
+              {
+                "type": "calculated",
+                "name": "Fiscal Week",
+                "dataType": "double",
+                "isDataTypeInferred": true,
+                "expression": " ROUNDDOWN(Dates[Fiscal Day Number]/7,0) + 1"
+              },
+              {
+                "type": "calculated",
+                "name": "Fiscal Year",
+                "dataType": "int64",
+                "isDataTypeInferred": true,
+                "expression": " YEAR(Dates[FiscalEndDate])"
+              },
+              {
+                "type": "calculated",
+                "name": "FiscalEndDate",
+                "dataType": "dateTime",
+                "isDataTypeInferred": true,
+                "isHidden": true,
+                "expression": " DATE(Year(Dates[FiscalStartDate])+1,[FiscalMonthStart], 1) - 1"
+              },
+              {
+                "type": "calculated",
+                "name": "FiscalStartDate",
+                "dataType": "dateTime",
+                "isDataTypeInferred": true,
+                "isHidden": true,
+                "expression": " IF(Dates[month]< [FiscalMonthStart]  , DATE(Dates[year]-1,[FiscalMonthStart], 1),DATE(Dates[year],[FiscalMonthStart], 1))",
+                "formatString": "General Date"
+              },
+              {
+                "type": "calculated",
+                "name": "Is After Current Date",
+                "dataType": "boolean",
+                "isDataTypeInferred": false,
+                "expression": " if([Date]>=[CurrentDate],1,0)",
+                "formatString": "\"TRUE\";\"TRUE\";\"FALSE\""
+              },
+              {
+                "type": "calculated",
+                "name": "Is Current Day of the Year or Before",
+                "dataType": "boolean",
+                "isDataTypeInferred": true,
+                "expression": " if( Dates[Fiscal Day Number] <= [FiscalDayNumberToday], TRUE, FALSE)",
+                "formatString": "\"TRUE\";\"TRUE\";\"FALSE\""
+              },
+              {
+                "type": "calculated",
+                "name": "Is Current Month",
+                "dataType": "boolean",
+                "isDataTypeInferred": true,
+                "expression": " if(MONTH(Dates[Date])=Month([CurrentDate]),TRUE,FALSE)",
+                "formatString": "\"TRUE\";\"TRUE\";\"FALSE\""
+              },
+              {
+                "type": "calculated",
+                "name": "Is Current Quarter",
+                "dataType": "boolean",
+                "isDataTypeInferred": true,
+                "expression": " if(Dates[Fiscal Quarter Number] = [FiscalQuarterToday],TRUE,FALSE)",
+                "formatString": "\"TRUE\";\"TRUE\";\"FALSE\""
+              },
+              {
+                "type": "calculated",
+                "name": "Is Current Year",
+                "dataType": "boolean",
+                "isDataTypeInferred": true,
+                "expression": " if([Fiscal Year]=[FiscalYearToday],TRUE,FALSE)",
+                "formatString": "\"TRUE\";\"TRUE\";\"FALSE\""
+              },
+              {
+                "type": "calculated",
+                "name": "Is Last 3 Months",
+                "dataType": "boolean",
+                "isDataTypeInferred": true,
+                "expression": " if( AND([CurrentDate] - Dates[Date] <=90  , [CurrentDate] >= Dates[Date]), TRUE, FALSE)",
+                "formatString": "\"TRUE\";\"TRUE\";\"FALSE\""
+              },
+              {
+                "type": "calculated",
+                "name": "Is Last 3 Years",
+                "dataType": "boolean",
+                "isDataTypeInferred": true,
+                "expression": " if([FiscalYearToday] - Dates[Fiscal Year] < 3 && [FiscalYearToday] - Dates[Fiscal Year] >= -1,TRUE,FALSE)",
+                "formatString": "\"TRUE\";\"TRUE\";\"FALSE\""
+              },
+              {
+                "type": "calculated",
+                "name": "Is Last Year",
+                "dataType": "boolean",
+                "isDataTypeInferred": true,
+                "expression": " if([FiscalYearToday] - Dates[Fiscal Year] <= 1 && [FiscalYearToday] - Dates[Fiscal Year] >= -1,TRUE,FALSE)",
+                "formatString": "\"TRUE\";\"TRUE\";\"FALSE\""
+              }
+            ],
+            "partitions": [
+              {
+                "name": "dateview",
+                "dataView": "full",
+                "source": {
+                  "query": " SELECT [smgt].[dateview].* FROM [smgt].[dateview] ",
+                  "dataSource": "ST_DS"
+                }
+              }
+            ],
+            "measures": [
+              {
+                "name": "CurrentDate",
+                "expression": " today()"
+              },
+              {
+                "name": "FiscalDayNumberToday",
+                "expression": " ROUNDDOWN([FiscalDayNumberTodayFraction],0)",
+                "isHidden": true
+              },
+              {
+                "name": "FiscalDayNumberTodayFraction",
+                "expression": " 1. * [CurrentDate] - [FiscalStartDateToday]",
+                "isHidden": true
+              },
+              {
+                "name": "FiscalMonthStart",
+                "expression": " VALUE(CALCULATE(FIRSTNONBLANK(Configuration[Value],1),Configuration[Name] = \"FiscalMonthStart\"))",
+                "isHidden": true
+              },
+              {
+                "name": "FiscalMonthToday",
+                "expression": " if([FiscalMonthStart] > MONTH([CurrentDate]), 13 - [FiscalMonthStart] + MONTH([CurrentDate]), MONTH([CurrentDate]) - [FiscalMonthStart] + 1)",
+                "isHidden": true
+              },
+              {
+                "name": "FiscalQuarterToday",
+                "expression": " IF([FiscalMonthToday] >= 1 && [FiscalMonthToday] <= 3, 1, IF([FiscalMonthToday] >= 4 && [FiscalMonthToday] <= 6, 2, IF([FiscalMonthToday] >= 7 && [FiscalMonthToday] <= 9, 3, IF([FiscalMonthToday] >= 10 && [FiscalMonthToday] <= 12,4,0))))",
+                "isHidden": true
+              },
+              {
+                "name": "FiscalStartDateToday",
+                "expression": " IF( MONTH([CurrentDate])< [FiscalMonthStart] , DATE([FiscalYearToday] - 1, [FiscalMonthStart],1), DATE([FiscalYearToday], [FiscalMonthStart],1))",
+                "isHidden": true
+              },
+              {
+                "name": "FiscalYearToday",
+                "expression": " IF([FiscalMonthStart] = 1, YEAR([CurrentDate]), IF(Month([CurrentDate]) >= [FiscalMonthStart], YEAR([CurrentDate]) + 1, YEAR([CurrentDate])))",
+                "isHidden": true
+              }
+            ],
+            "annotations": [
+              {
+                "name": "_TM_ExtProp_QueryDefinition",
+                "value": " SELECT [smgt].[dateview].* FROM [smgt].[dateview] "
+              },
+              {
+                "name": "_TM_ExtProp_DbTableName",
+                "value": "dateview"
+              },
+              {
+                "name": "_TM_ExtProp_DbSchemaName",
+                "value": "smgt"
+              }
+            ]
+          },
+          {
+            "name": "Lead",
+            "columns": [
+              {
+                "name": "Estimated Amount",
+                "dataType": "double",
+                "sourceColumn": "Estimated Amount",
+                "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00",
+                "sourceProviderType": "Numeric",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\" Accuracy=\"2\" ThousandSeparator=\"True\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Status",
+                "dataType": "string",
+                "sourceColumn": "Status",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Lead Quality",
+                "dataType": "string",
+                "sourceColumn": "Lead Quality",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Subject",
+                "dataType": "string",
+                "sourceColumn": "Subject",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Job Title",
+                "dataType": "string",
+                "sourceColumn": "Job Title",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Lead Id",
+                "dataType": "string",
+                "sourceColumn": "Lead Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Estimated Amount Base",
+                "dataType": "double",
+                "sourceColumn": "Estimated Amount Base",
+                "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00",
+                "sourceProviderType": "Numeric",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\" Accuracy=\"2\" ThousandSeparator=\"True\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Owner Id",
+                "dataType": "string",
+                "isHidden": true,
+                "sourceColumn": "Owner Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "State",
+                "dataType": "string",
+                "sourceColumn": "State",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Campaign Id",
+                "dataType": "string",
+                "sourceColumn": "Campaign Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Estimated Close Date",
+                "dataType": "dateTime",
+                "sourceColumn": "Estimated Close Date",
+                "formatString": "General Date",
+                "sourceProviderType": "DBTimeStamp"
+              },
+              {
+                "name": "Lead Source Name",
+                "dataType": "string",
+                "sourceColumn": "Lead Source Name",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Industry Name",
+                "dataType": "string",
+                "sourceColumn": "Industry Name",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Purchase Time Frame",
+                "dataType": "string",
+                "sourceColumn": "Purchase Time Frame",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Created On",
+                "dataType": "dateTime",
+                "sourceColumn": "Created On",
+                "formatString": "Short Date",
+                "sourceProviderType": "DBDate",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": "<Format Format=\"DateTimeShortDatePattern\" />"
+                  }
+                ]
+              },
+              {
+                "name": "Company Name",
+                "dataType": "string",
+                "sourceColumn": "Company Name",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Last Name",
+                "dataType": "string",
+                "sourceColumn": "Last Name",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "First Name",
+                "dataType": "string",
+                "sourceColumn": "First Name",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Email",
+                "dataType": "string",
+                "sourceColumn": "Email",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "City",
+                "dataType": "string",
+                "sourceColumn": "City",
+                "sourceProviderType": "WChar",
+                "dataCategory": "City"
+              },
+              {
+                "name": "Country",
+                "dataType": "string",
+                "sourceColumn": "Country",
+                "sourceProviderType": "WChar",
+                "dataCategory": "Country"
+              },
+              {
+                "type": "calculated",
+                "name": "Age",
+                "dataType": "dateTime",
+                "isDataTypeInferred": true,
+                "expression": " 'Dates'[CurrentDate]-'Lead'[Created On]",
+                "formatString": "General Date"
+              },
+              {
+                "type": "calculated",
+                "name": "Lead Link",
+                "dataType": "string",
+                "isDataTypeInferred": true,
+                "expression": [
+                  " if( 'Calculations'[LinksSupported],",
+                  "                           if([SourceApplication]=\"DynamicsCRM\", [BaseURL] & \"/main.aspx?etn=lead&id=\" & 'Lead'[Lead ID] & \"&pagetype=entityrecord\",",
+                  "                               if([SourceApplication]=\"Salesforce\", [BaseURL] & \"/\" & 'Lead'[Lead Id], \"\")",
+                  "\t\t\t\t\t\t   )",
+                  "               )"
+                ],
+                "dataCategory": "WebUrl"
+              },
+              {
+                "type": "calculated",
+                "name": "Location",
+                "dataType": "string",
+                "isDataTypeInferred": true,
+                "expression": " 'Lead'[City] & \", \" & 'Lead'[Country]"
+              }
+            ],
+            "partitions": [
+              {
+                "name": "leadview",
+                "dataView": "full",
+                "source": {
+                  "query": " SELECT [smgt].[leadview].* FROM [smgt].[leadview] ",
+                  "dataSource": "ST_DS"
+                }
+              }
+            ],
+            "annotations": [
+              {
+                "name": "_TM_ExtProp_QueryDefinition",
+                "value": " SELECT [smgt].[leadview].* FROM [smgt].[leadview] "
+              },
+              {
+                "name": "_TM_ExtProp_DbTableName",
+                "value": "leadview"
+              },
+              {
+                "name": "_TM_ExtProp_DbSchemaName",
+                "value": "smgt"
+              }
+            ]
+          },
+          {
+            "name": "Calculations",
+            "columns": [
+              {
+                "name": "MeasureValues",
+                "dataType": "int64",
+                "isHidden": true,
+                "sourceColumn": "MeasureValues",
+                "sourceProviderType": "Integer"
+              }
+            ],
+            "partitions": [
+              {
+                "name": "measuresview",
+                "dataView": "full",
+                "source": {
+                  "query": " SELECT [smgt].[measuresview].* FROM [smgt].[measuresview] ",
+                  "dataSource": "ST_DS"
+                }
+              }
+            ],
+            "measures": [
+              {
+                "name": "Actual Revenue",
+                "expression": " CALCULATE(SUM(Opportunity[Actual Value]))",
+                "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Actual Revenue (cumul)",
+                "expression": [
+                  " CALCULATE (",
+                  "                    SUM(Opportunity[Actual Value]),",
+                  "                    FILTER (",
+                  "                    ALLSELECTED(Dates),",
+                  "                       Dates[date]<= MAX ( Dates[date] )",
+                  "                    ),VALUES(Dates[Fiscal Year]))"
+                ],
+                "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Actual Revenue MTD",
+                "expression": " CALCULATE([Actual Revenue], FILTER(ALL(Dates), Dates[Date] <= [CurrentDate]  && Dates[Fiscal Month Number] = [FiscalMonthToday]&& Dates[Date] <= MAX(Dates[date])),VALUES(Dates[Fiscal Year]))",
+                "formatString": "\\$#,0.0;(\\$#,0.0);\\$#,0.0",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\" Accuracy=\"1\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Average Actual Deal Size",
+                "expression": " DIVIDE([Actual Revenue],COUNTROWS(filter(Opportunity,Opportunity[State]=\"Won\")),0)",
+                "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Actual Revenue YTD",
+                "expression": " CALCULATE([Actual Revenue], FILTER(ALL(Dates), Dates[Date] <= [CurrentDate]  &&  Dates[Date] <= MAX(Dates[date])),VALUES(Dates[Fiscal Year]))",
+                "formatString": "\\$#,0.0;(\\$#,0.0);\\$#,0.0",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\" Accuracy=\"1\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Actual Revenue QTD",
+                "expression": " CALCULATE([Actual Revenue], FILTER(ALL(Dates), Dates[Date] <= [CurrentDate] && Dates[Fiscal Quarter Number] = [FiscalQuarterToday] &&  Dates[Date] <= MAX(Dates[date])),VALUES(Dates[Fiscal Year]))",
+                "formatString": "\\$#,0.0;(\\$#,0.0);\\$#,0.0",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\" Accuracy=\"1\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Average Estimated Deal Size",
+                "expression": " DIVIDE([Estimated Revenue],COUNTROWS(filter(Opportunity,Opportunity[State]=\"Open\")),0)",
+                "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Average Lead Age",
+                "expression": " DIVIDE( sum('Lead'[Age]), countrows(filter('Lead', 'Lead'[State]=\"Open\")), 0)",
+                "formatString": "0"
+              },
+              {
+                "name": "BaseURL",
+                "expression": " LOOKUPVALUE('Configuration'[Value],Configuration[Name],\"BaseURL\")",
+                "isHidden": true
+              },
+              {
+                "name": "Estimated Revenue",
+                "expression": [
+                  " IF( COUNTAX(Product,Product[Product Id] )=COUNTAX(all(Product), Product[Product Id]),",
+                  "SUMX(filter( 'Opportunity',Opportunity[State]=\"Open\"), Opportunity[Estimated Value]),",
+                  "SUMX(filter( 'Opportunity', Opportunity[State]=\"Open\"), calculate(sum('Opportunity Product'[Revenue])))",
+                  ")"
+                ],
+                "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Estimated Revenue (cumul)",
+                "expression": [
+                  " CALCULATE(  ",
+                  "[Estimated Revenue],",
+                  "FILTER (ALLSELECTED(Dates[date]),",
+                  " Dates[date]<= MAX ( Dates[date])),VALUES(Dates[Fiscal Year])",
+                  ")"
+                ],
+                "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "LastYearMTDRevenue",
+                "expression": " CALCULATE([Actual Revenue], FILTER(ALL(Dates), Dates[Fiscal Year] = [FiscalYearToday]-1 && Dates[Fiscal Day Number]<= [FiscalDayNumberToday] && Dates[Fiscal Month Number] =[FiscalMonthToday]))",
+                "isHidden": true
+              },
+              {
+                "name": "LastYearQTDRevenue",
+                "expression": " CALCULATE([Actual Revenue], FILTER(ALL(Dates), Dates[Fiscal Year] = [FiscalYearToday]-1 && Dates[Fiscal Day Number]<= [FiscalDayNumberToday] && Dates[Fiscal Quarter Number] =[FiscalQuarterToday]))",
+                "isHidden": true
+              },
+              {
+                "name": "LastYearYTDRevenue",
+                "expression": " CALCULATE([Actual Revenue], FILTER(ALL(Dates), Dates[Fiscal Year] = [FiscalYearToday]-1 && Dates[Fiscal Day Number]<= [FiscalDayNumberToday]))",
+                "isHidden": true
+              },
+              {
+                "name": "Lead Conversion Rate",
+                "expression": [
+                  " ",
+                  "     calculate( COUNTROWS(filter('Lead','Lead'[State]=\"Qualified\"))) /  ",
+                  "",
+                  "     calculate( COUNTROWS(filter('Lead', OR('Lead'[State]=\"Qualified\",'Lead'[State]=\"Disqualified\"))))"
+                ],
+                "formatString": "0.0 %;-0.0 %;0.0 %"
+              },
+              {
+                "name": "LinksSupported",
+                "expression": [
+                  " if(or(",
+                  "                                         isblank([BaseURL]),",
+                  "                                         isblank([SourceApplication])",
+                  "                              ),0,1)"
+                ],
+                "isHidden": true
+              },
+              {
+                "name": "Lost Opportunity Count",
+                "expression": [
+                  " if( ",
+                  "countax(Product,Product[Product Id] ) = COUNTAX(all(Product), Product[Product Id]),",
+                  "COUNTAX( FILTER(Opportunity, Opportunity[State]=\"Lost\"), Opportunity[Opportunity ID]),",
+                  "CALCULATE( ",
+                  "   DISTINCTCOUNT( 'Opportunity Product'[Opportunity Id]), ",
+                  "   Opportunity[State]=\"Lost\")",
+                  ")"
+                ],
+                "formatString": "#,0"
+              },
+              {
+                "name": "SourceApplication",
+                "expression": " LOOKUPVALUE('Configuration'[Value],Configuration[Name],\"SourceApplication\")",
+                "isHidden": true
+              },
+              {
+                "name": "ThisYearMTDRevenue",
+                "expression": " CALCULATE([Actual Revenue], FILTER(ALL(Dates), Dates[Fiscal Year] = [FiscalYearToday] && Dates[Fiscal Day Number]<= [FiscalDayNumberToday] && Dates[Fiscal Month Number] =[FiscalMonthToday]))",
+                "isHidden": true
+              },
+              {
+                "name": "ThisYearQTDRevenue",
+                "expression": " CALCULATE([Actual Revenue], FILTER(ALL(Dates), Dates[Fiscal Year] = [FiscalYearToday] && Dates[Fiscal Day Number]<= [FiscalDayNumberToday] && Dates[Fiscal Quarter Number] =[FiscalQuarterToday]))",
+                "isHidden": true
+              },
+              {
+                "name": "ThisYearYTDRevenue",
+                "expression": " CALCULATE([Actual Revenue], FILTER(ALL(Dates), Dates[Fiscal Year] = [FiscalYearToday] && Dates[Fiscal Day Number]<= [FiscalDayNumberToday]))",
+                "isHidden": true
+              },
+              {
+                "name": "Win Ratio",
+                "expression": " IF([Won Opportunity Count] + [Lost Opportunity Count] = 0, 0, [Won Opportunity Count]/([Won Opportunity Count]+[Lost Opportunity Count]) )",
+                "formatString": "0.0 %;-0.0 %;0.0 %"
+              },
+              {
+                "name": "Won Opportunity Count",
+                "expression": [
+                  " if( ",
+                  "countax(Product,Product[Product Id] ) = COUNTAX(all(Product), Product[Product Id]),",
+                  "COUNTAX( FILTER(Opportunity, Opportunity[State]=\"Won\"), Opportunity[Opportunity ID]),",
+                  "CALCULATE( ",
+                  "   DISTINCTCOUNT( 'Opportunity Product'[Opportunity Id]), ",
+                  "   Opportunity[State]=\"Won\")",
+                  ")"
+                ],
+                "formatString": "#,0"
+              },
+              {
+                "name": "YOY Growth",
+                "expression": " if( [LastYearYTDRevenue]=0,0,([ThisYearYTDRevenue]-[LastYearYTDRevenue])/  [LastYearYTDRevenue])",
+                "formatString": "0 %;-0 %;0 %"
+              },
+              {
+                "name": "YOY Month Growth",
+                "expression": " ([ThisYearMTDRevenue] - [LastYearMTDRevenue]) / if([LastYearMTDRevenue]>0,[LastYearMTDRevenue],1)",
+                "formatString": "0 %;-0 %;0 %"
+              },
+              {
+                "name": "YOY Quarter Growth",
+                "expression": " ([ThisYearQTDRevenue] - [LastYearQTDRevenue]) / if([LastYearQTDRevenue]>0, [LastYearQTDRevenue],1)",
+                "formatString": "0 %;-0 %;0 %"
+              }
+            ],
+            "annotations": [
+              {
+                "name": "_TM_ExtProp_QueryDefinition",
+                "value": " SELECT [smgt].[measuresview].* FROM [smgt].[measuresview] "
+              },
+              {
+                "name": "_TM_ExtProp_DbTableName",
+                "value": "measuresview"
+              },
+              {
+                "name": "_TM_ExtProp_DbSchemaName",
+                "value": "smgt"
+              }
+            ]
+          },
+          {
+            "name": "Opportunity Product",
+            "columns": [
+              {
+                "name": "Product Id",
+                "dataType": "string",
+                "isHidden": true,
+                "sourceColumn": "Product Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Opportunity Id",
+                "dataType": "string",
+                "isHidden": true,
+                "sourceColumn": "Opportunity Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Revenue",
+                "dataType": "double",
+                "sourceColumn": "Revenue",
+                "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00",
+                "sourceProviderType": "Numeric",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\" Accuracy=\"2\" ThousandSeparator=\"True\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "partitions": [
+              {
+                "name": "opportunityproductview",
+                "dataView": "full",
+                "source": {
+                  "query": " SELECT [smgt].[opportunityproductview].* FROM [smgt].[opportunityproductview] ",
+                  "dataSource": "ST_DS"
+                }
+              }
+            ],
+            "annotations": [
+              {
+                "name": "_TM_ExtProp_QueryDefinition",
+                "value": " SELECT [smgt].[opportunityproductview].* FROM [smgt].[opportunityproductview] "
+              },
+              {
+                "name": "_TM_ExtProp_DbTableName",
+                "value": "opportunityproductview"
+              },
+              {
+                "name": "_TM_ExtProp_DbSchemaName",
+                "value": "smgt"
+              }
+            ]
+          },
+          {
+            "name": "Opportunity",
+            "columns": [
+              {
+                "name": "Opportunity Id",
+                "dataType": "string",
+                "sourceColumn": "Opportunity Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Opportunity Name",
+                "dataType": "string",
+                "sourceColumn": "Opportunity Name",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Owner Id",
+                "dataType": "string",
+                "isHidden": true,
+                "sourceColumn": "Owner Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Created Date",
+                "dataType": "dateTime",
+                "sourceColumn": "Created Date",
+                "formatString": "Short Date",
+                "sourceProviderType": "DBDate",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": "<Format Format=\"DateTimeShortDatePattern\" />"
+                  }
+                ]
+              },
+              {
+                "name": "Actual Close Date",
+                "dataType": "dateTime",
+                "sourceColumn": "Actual Close Date",
+                "formatString": "General Date",
+                "sourceProviderType": "DBDate"
+              },
+              {
+                "name": "Estimated Close Date",
+                "dataType": "dateTime",
+                "sourceColumn": "Estimated Close Date",
+                "formatString": "Short Date",
+                "sourceProviderType": "DBDate",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": "<Format Format=\"DateTimeShortDatePattern\" />"
+                  }
+                ]
+              },
+              {
+                "name": "Close Probability",
+                "dataType": "int64",
+                "sourceColumn": "Close Probability",
+                "sourceProviderType": "Integer"
+              },
+              {
+                "name": "Account Id",
+                "dataType": "string",
+                "isHidden": true,
+                "sourceColumn": "Account Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Actual Value",
+                "dataType": "double",
+                "sourceColumn": "Actual Value",
+                "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+                "sourceProviderType": "Numeric",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\" ThousandSeparator=\"True\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Estimated Value",
+                "dataType": "double",
+                "sourceColumn": "Estimated Value",
+                "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+                "sourceProviderType": "Numeric",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\" ThousandSeparator=\"True\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Expected Value",
+                "dataType": "double",
+                "sourceColumn": "Expected Value",
+                "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+                "sourceProviderType": "Numeric",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": [
+                      "<Format Format=\"Currency\" ThousandSeparator=\"True\">",
+                      "\t<Currency LCID=\"1033\" DisplayName=\"$ English (United States)\" Symbol=\"$\" PositivePattern=\"0\" NegativePattern=\"0\" />",
+                      "</Format>"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Status",
+                "dataType": "string",
+                "sourceColumn": "Status",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Sales Stage Code",
+                "dataType": "string",
+                "sourceColumn": "Sales Stage Code",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Sales Stage",
+                "dataType": "string",
+                "sourceColumn": "Sales Stage",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "State",
+                "dataType": "string",
+                "sourceColumn": "State",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Lead Id",
+                "dataType": "string",
+                "sourceColumn": "Lead Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Opportunity Rating Name",
+                "dataType": "string",
+                "sourceColumn": "Opportunity Rating Name",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Source",
+                "dataType": "string",
+                "sourceColumn": "Source",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "type": "calculated",
+                "name": "Close Date",
+                "dataType": "dateTime",
+                "isDataTypeInferred": true,
+                "expression": " IF(ISBLANK('Opportunity'[Actual Close Date]),'Opportunity'[Estimated Close Date],'Opportunity'[Actual Close Date])",
+                "formatString": "Short Date",
+                "annotations": [
+                  {
+                    "name": "Format",
+                    "value": "<Format Format=\"DateTimeShortDatePattern\" />"
+                  }
+                ]
+              },
+              {
+                "type": "calculated",
+                "name": "Opportunity Link",
+                "dataType": "string",
+                "isDataTypeInferred": true,
+                "expression": [
+                  " if([LinksSupported],",
+                  "                       if([SourceApplication]=\"DynamicsCRM\",[BaseURL] & \"/main.aspx?etn=opportunity&id=\" & 'Opportunity'[Opportunity Id] & \"&pagetype=entityrecord\",",
+                  "                             if([SourceApplication]=\"Salesforce\", [BaseURL] & \"/\" & 'Opportunity'[Opportunity Id], \"\"",
+                  "\t\t\t\t\t\t\t )",
+                  "\t\t\t     \t\t)",
+                  "\t\t\t\t\t) "
+                ],
+                "dataCategory": "WebUrl"
+              }
+            ],
+            "partitions": [
+              {
+                "name": "opportunityview",
+                "dataView": "full",
+                "source": {
+                  "query": " SELECT [smgt].[opportunityview].* FROM [smgt].[opportunityview] ",
+                  "dataSource": "ST_DS"
+                }
+              }
+            ],
+            "annotations": [
+              {
+                "name": "_TM_ExtProp_QueryDefinition",
+                "value": " SELECT [smgt].[opportunityview].* FROM [smgt].[opportunityview] "
+              },
+              {
+                "name": "_TM_ExtProp_DbTableName",
+                "value": "opportunityview"
+              },
+              {
+                "name": "_TM_ExtProp_DbSchemaName",
+                "value": "smgt"
+              }
+            ]
+          },
+          {
+            "name": "Product",
+            "columns": [
+              {
+                "name": "Product Id",
+                "dataType": "string",
+                "sourceColumn": "Product Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Product Name",
+                "dataType": "string",
+                "sourceColumn": "Product Name",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "level",
+                "dataType": "int64",
+                "sourceColumn": "level",
+                "sourceProviderType": "Integer"
+              },
+              {
+                "name": "Product Level 1",
+                "dataType": "string",
+                "sourceColumn": "Product Level 1",
+                "sourceProviderType": "Char"
+              },
+              {
+                "name": "Product Level 2",
+                "dataType": "string",
+                "sourceColumn": "Product Level 2",
+                "sourceProviderType": "Char"
+              },
+              {
+                "name": "Product Level 3",
+                "dataType": "string",
+                "sourceColumn": "Product Level 3",
+                "sourceProviderType": "Char"
+              }
+            ],
+            "partitions": [
+              {
+                "name": "productview",
+                "dataView": "full",
+                "source": {
+                  "query": " SELECT [smgt].[productview].* FROM [smgt].[productview] ",
+                  "dataSource": "ST_DS"
+                }
+              }
+            ],
+            "annotations": [
+              {
+                "name": "_TM_ExtProp_QueryDefinition",
+                "value": " SELECT [smgt].[productview].* FROM [smgt].[productview] "
+              },
+              {
+                "name": "_TM_ExtProp_DbTableName",
+                "value": "productview"
+              },
+              {
+                "name": "_TM_ExtProp_DbSchemaName",
+                "value": "smgt"
+              }
+            ]
+          },
+          {
+            "name": "User",
+            "columns": [
+              {
+                "name": "Full Name",
+                "dataType": "string",
+                "sourceColumn": "Full Name",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "User Id",
+                "dataType": "string",
+                "isHidden": true,
+                "sourceColumn": "User Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Parent User Id",
+                "dataType": "string",
+                "isHidden": true,
+                "sourceColumn": "Parent User Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Hierarchy Level",
+                "dataType": "int64",
+                "sourceColumn": "Hierarchy Level",
+                "sourceProviderType": "Integer"
+              },
+              {
+                "name": "Manager Name",
+                "dataType": "string",
+                "sourceColumn": "Manager Name",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "type": "calculated",
+                "name": "Org Level 1",
+                "dataType": "string",
+                "isDataTypeInferred": true,
+                "expression": " LOOKUPVALUE(User[Full Name],User[User Id],PATHITEM ( [Path], 2 ))"
+              },
+              {
+                "type": "calculated",
+                "name": "Org Level 2",
+                "dataType": "string",
+                "isDataTypeInferred": true,
+                "expression": " LOOKUPVALUE(User[Full Name],User[User Id],PATHITEM ( [Path], 3 ))"
+              },
+              {
+                "type": "calculated",
+                "name": "Org Level 3",
+                "dataType": "string",
+                "isDataTypeInferred": true,
+                "expression": " LOOKUPVALUE(User[Full Name],User[User Id],PATHITEM ( [Path], 4 ))"
+              },
+              {
+                "type": "calculated",
+                "name": "Path",
+                "dataType": "string",
+                "isDataTypeInferred": true,
+                "isHidden": true,
+                "expression": " PATH([User Id], [Parent User Id])"
+              }
+            ],
+            "partitions": [
+              {
+                "name": "userview",
+                "dataView": "full",
+                "source": {
+                  "query": " SELECT [smgt].[userview].* FROM [smgt].[userview] ",
+                  "dataSource": "ST_DS"
+                }
+              }
+            ],
+            "annotations": [
+              {
+                "name": "_TM_ExtProp_QueryDefinition",
+                "value": " SELECT [smgt].[userview].* FROM [smgt].[userview] "
+              },
+              {
+                "name": "_TM_ExtProp_DbTableName",
+                "value": "userview"
+              },
+              {
+                "name": "_TM_ExtProp_DbSchemaName",
+                "value": "smgt"
+              }
+            ]
+          },
+          {
+            "name": "Team",
+            "columns": [
+              {
+                "name": "Team Id",
+                "dataType": "string",
+                "sourceColumn": "Team Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Team Name",
+                "dataType": "string",
+                "sourceColumn": "Team Name",
+                "sourceProviderType": "WChar"
+              }
+            ],
+            "partitions": [
+              {
+                "name": "teamview",
+                "dataView": "full",
+                "source": {
+                  "query": " SELECT [smgt].[teamview].* FROM [smgt].[teamview] ",
+                  "dataSource": "ST_DS"
+                }
+              }
+            ],
+            "annotations": [
+              {
+                "name": "_TM_ExtProp_QueryDefinition",
+                "value": " SELECT [smgt].[teamview].* FROM [smgt].[teamview] "
+              },
+              {
+                "name": "_TM_ExtProp_DbTableName",
+                "value": "teamview"
+              },
+              {
+                "name": "_TM_ExtProp_DbSchemaName",
+                "value": "smgt"
+              }
+            ]
+          },
+          {
+            "name": "Owner",
+            "columns": [
+              {
+                "name": "Owner Id",
+                "dataType": "string",
+                "sourceColumn": "Owner Id",
+                "sourceProviderType": "Guid"
+              },
+              {
+                "name": "Owner Name",
+                "dataType": "string",
+                "sourceColumn": "Owner Name",
+                "sourceProviderType": "WChar"
+              },
+              {
+                "name": "Owner Type",
+                "dataType": "string",
+                "sourceColumn": "Owner Type",
+                "sourceProviderType": "Char"
+              }
+            ],
+            "partitions": [
+              {
+                "name": "ownerview",
+                "dataView": "full",
+                "source": {
+                  "query": " SELECT [smgt].[ownerview].* FROM [smgt].[ownerview] ",
+                  "dataSource": "ST_DS"
+                }
+              }
+            ],
+            "annotations": [
+              {
+                "name": "_TM_ExtProp_QueryDefinition",
+                "value": " SELECT [smgt].[ownerview].* FROM [smgt].[ownerview] "
+              },
+              {
+                "name": "_TM_ExtProp_DbTableName",
+                "value": "ownerview"
+              },
+              {
+                "name": "_TM_ExtProp_DbSchemaName",
+                "value": "smgt"
+              }
+            ]
+          }
+        ],
+        "relationships": [
+          {
+            "name": "e22be62c-dc94-46b1-a2bc-a28358f86da6",
+            "fromTable": "Opportunity",
+            "fromColumn": "Close Date",
+            "toTable": "Dates",
+            "toColumn": "Date"
+          },
+          {
+            "name": "18c59cf7-9651-44a5-bdc5-06693d2065a9",
+            "fromTable": "Lead",
+            "fromColumn": "Created On",
+            "toTable": "Dates",
+            "toColumn": "Date"
+          },
+          {
+            "name": "762f0b16-9f9e-4af7-a5ee-7d6bd70a3049",
+            "fromTable": "Opportunity",
+            "fromColumn": "Account Id",
+            "toTable": "Account",
+            "toColumn": "Account Id"
+          },
+          {
+            "name": "e4410e67-ac75-4db3-9d5c-a60fa2b2f6cd",
+            "fromTable": "Opportunity Product",
+            "fromColumn": "Product Id",
+            "toTable": "Product",
+            "toColumn": "Product Id"
+          },
+          {
+            "name": "d5b6ac02-b327-47a1-9cd5-2375cebadbd8",
+            "fromTable": "Opportunity Product",
+            "fromColumn": "Opportunity Id",
+            "toTable": "Opportunity",
+            "toColumn": "Opportunity Id",
+            "crossFilteringBehavior": "bothDirections"
+          },
+          {
+            "name": "7322f350-eb5d-4166-8a86-bc19df8e6bdc",
+            "fromTable": "Lead",
+            "fromColumn": "Owner Id",
+            "toTable": "Owner",
+            "toColumn": "Owner Id"
+          },
+          {
+            "name": "b7929ab5-4448-4107-9410-be7f716ba394",
+            "fromTable": "Opportunity",
+            "fromColumn": "Owner Id",
+            "toTable": "Owner",
+            "toColumn": "Owner Id"
+          },
+          {
+            "name": "e0e20d76-f2c9-4768-a30a-aa9a735f962f",
+            "fromTable": "Account",
+            "fromColumn": "Owner Id",
+            "toTable": "Owner",
+            "toColumn": "Owner Id",
+            "isActive": false
+          },
+          {
+            "name": "bb314dd1-2f82-4162-9a38-28a08c683fd0",
+            "fromTable": "User",
+            "fromColumn": "User Id",
+            "toTable": "Owner",
+            "toColumn": "Owner Id",
+            "crossFilteringBehavior": "bothDirections"
+          },
+          {
+            "name": "b8ee8dea-d4aa-470e-bc67-dd0bd3743296",
+            "fromTable": "Team",
+            "fromColumn": "Team Id",
+            "toTable": "Owner",
+            "toColumn": "Owner Id",
+            "crossFilteringBehavior": "bothDirections"
+          }
+        ],
+        "annotations": [
+          {
+            "name": "ClientCompatibilityLevel",
+            "value": "400"
+          }
+        ]
+      }
+    }
+  }
+}
