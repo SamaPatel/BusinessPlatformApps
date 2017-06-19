@@ -79,7 +79,7 @@ namespace Microsoft.Deployment.Actions.OnPremise.TaskScheduler
 
                 if (isPowerShell)
                 {
-                    optionalArguments = $"-File \"{optionalArguments}\"";
+                    optionalArguments = $"-ExecutionPolicy AllSigned -File \"{optionalArguments}\"";
                 }
 
                 if (!string.IsNullOrEmpty(taskParameters))

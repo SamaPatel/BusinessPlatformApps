@@ -130,6 +130,9 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Trinet.Core.IO.Ntfs, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0aeaaa20a328a46c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Trinet.Core.IO.Ntfs.4.0.0\lib\net35\Trinet.Core.IO.Ntfs.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedVersion.cs">
@@ -170,7 +173,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Deployment.Common\Microsoft.Deployment.Common.csproj">

@@ -58,8 +58,8 @@ export class SqlServer extends ViewModelBase {
                 let locationsResponse: ActionResponse = await this.MS.HttpService.executeAsync('Microsoft-GetLocations', {});
                 if (locationsResponse.IsSuccess) {
                     this.azureLocations = locationsResponse.Body.value;
-                    if (this.azureLocations && this.azureLocations.length > 5) {
-                        this.sqlLocation = this.azureLocations[5].Name;
+                    if (this.azureLocations && this.azureLocations.length > 23) {
+                        this.sqlLocation = this.azureLocations[23].Name;
                     }
                 }
             }
