@@ -21,7 +21,7 @@ DROP TABLE dbo.team;
 DROP TABLE dbo.systemuser;
 DROP TABLE dbo.territory;
 
--- Looks like these need to be remove, too
+-- Looks like these need to be removed, too
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='AttributeMetadata' AND TABLE_TYPE='BASE TABLE')
     DROP TABLE dbo.AttributeMetadata;
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='GlobalOptionSetMetadata' AND TABLE_TYPE='BASE TABLE')

@@ -303,18 +303,19 @@ go
 -- UserView
 CREATE VIEW smgt.userview
 AS
-    WITH OrderedUSers(fullname, systemuserid, parentsystemuserid, hierarchylevel, managername) AS (
+    WITH OrderedUSers(fullname, systemuserid, parentsystemuserid, hierarchylevel, managername) AS 
+    (
         SELECT fullname, systemuserid, parentsystemuserid, 0 AS hierarchylevel, CAST(NULL AS NVARCHAR(250)) AS managername
         FROM dbo.systemuser su
-	    WHERE parentsystemuserid IS NULL AND isdisabled=0
-	    UNION ALL
-	    SELECT su.fullname, su.systemuserid, su.parentsystemuserid, OrderedUSers.hierarchylevel+1 AS hierarchylevel, CAST(OrderedUSers.fullname AS NVARCHAR(250)) AS managername
-	    FROM dbo.systemuser su INNER JOIN OrderedUSers ON su.parentsystemuserid=OrderedUSers.systemuserid
-	    WHERE su.isdisabled = 0
+        WHERE parentsystemuserid IS NULL AND isdisabled=0
+        UNION ALL
+        SELECT su.fullname, su.systemuserid, su.parentsystemuserid, OrderedUSers.hierarchylevel+1 AS hierarchylevel, CAST(OrderedUSers.fullname AS NVARCHAR(250)) AS managername
+        FROM dbo.systemuser su INNER JOIN OrderedUSers ON su.parentsystemuserid=OrderedUSers.systemuserid
+        WHERE su.isdisabled = 0
     )
-	    SELECT  systemuserid       [User Id],         
-			fullname               [Full Name],
-            parentsystemuserid     [Parent User Id],
-			hierarchylevel         [Employee Level]
-			FROM OrderedUSers;
+    SELECT  systemuserid        [User Id],         
+            fullname            [Full Name],
+            parentsystemuserid  [Parent User Id],
+            hierarchylevel      [Employee Level]
+    FROM OrderedUSers;
 go
