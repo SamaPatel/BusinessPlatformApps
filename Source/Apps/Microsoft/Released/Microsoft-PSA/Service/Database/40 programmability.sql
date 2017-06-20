@@ -29,9 +29,7 @@ END;
 go
 
 
-
-
-CREATE PROCEDURE psa.sp_get_pull_status
+CREATE PROCEDURE [psa].[sp_get_pull_status]
 AS
 BEGIN
 		
@@ -46,7 +44,7 @@ BEGIN
     DECLARE @StatusCode INT = -1;
 
 
-SELECT ta.[name] AS EntityName, SUM(pa.[rows]) AS [Count] INTO #counts
+	SELECT ta.[name] AS EntityName, SUM(pa.[rows]) AS [Count] INTO #counts
     FROM sys.tables ta INNER JOIN sys.partitions pa ON pa.OBJECT_ID = ta.OBJECT_ID    
                        INNER JOIN sys.schemas sc ON ta.schema_id = sc.schema_id
     WHERE
@@ -56,7 +54,7 @@ SELECT ta.[name] AS EntityName, SUM(pa.[rows]) AS [Count] INTO #counts
                         'msdyn_timeentry', 'msdyn_transactioncategory', 'opportunity', 'quote', 'quotedetail', 'salesorder', 'salesorderdetail', 'systemuser')
     GROUP BY ta.[name];
 
-SELECT CASE
+		SELECT CASE
                 WHEN c.[Count] = 0 AND i.initialcount = 0 THEN 100 
                 ELSE (
                         CASE
@@ -66,7 +64,7 @@ SELECT CASE
                      ) 
             END AS [Percentage], 
             c.EntityName as EntityName INTO #percentages
-		FROM #counts c INNER JOIN psa.entityinitialcount i ON i.entityname = c.entityname
+		FROM #counts c INNER JOIN psa.entityinitialcount i ON i.entityname = c.entityname COLLATE Latin1_General_100_CI_AS
 
 
 
@@ -76,7 +74,7 @@ SELECT CASE
 
 	IF EXISTS (SELECT *
 			   FROM #counts
-			   WHERE [Count] > 0 AND DATEDIFF(HOUR, @DeploymentTimestamp, Sysdatetime()) > 24)
+			   WHERE [Count] > 0 AND DATEDIFF(HOUR, @DeploymentTimestamp, SYSUTCDATETIME()) > 24)
 	SET @StatusCode = 1 --Data pull is partially complete
 
 	
@@ -87,13 +85,13 @@ SELECT CASE
 	DECLARE @CountsRows INT, @CountRowsComplete INT;
 	SELECT @CountsRows = COUNT(*) FROM #counts;
 	
-	SELECT p.[Percentage], p.[EntityName], i.lasttimestamp,  DATEDIFF(MINUTE, i.lasttimestamp, Sysdatetime()) AS [TimeDifference] INTO #entitiesComplete
+	SELECT p.[Percentage], p.[EntityName], i.lasttimestamp,  DATEDIFF(MINUTE, i.lasttimestamp, SYSUTCDATETIME()) AS [TimeDifference] INTO #entitiesComplete
     FROM #percentages p
-              INNER JOIN psa.entityinitialcount i ON i.entityName = p.EntityName
+              INNER JOIN psa.entityinitialcount i ON i.entityName = p.EntityName COLLATE Latin1_General_100_CI_AS
               WHERE 
-			  ((p.[Percentage] >= @CompletePercentage) AND DATEDIFF(MINUTE, i.lasttimestamp, Sysdatetime()) > 5) OR
+			  ((p.[Percentage] >= @CompletePercentage) AND DATEDIFF(MINUTE, i.lasttimestamp, SYSUTCDATETIME()) > 5) OR
 			  (p.[Percentage] >= 100) OR
-			  ((p.[Percentage] >= 100) AND DATEDIFF(MINUTE, i.lasttimestamp, Sysdatetime()) > 5)
+			  ((p.[Percentage] >= 100) AND DATEDIFF(MINUTE, i.lasttimestamp, SYSUTCDATETIME()) > 5)
 
 	SELECT @CountRowsComplete = COUNT(*) FROM #entitiesComplete;
 			  
@@ -102,7 +100,7 @@ SELECT CASE
 
  DECLARE @EntitiesWithNoData INT;
     SELECT @EntitiesWithNoData = COUNT(*) FROM #counts WHERE [Count] = 0;
-    IF @EntitiesWithNoData = @CountsRows AND DATEDIFF(HOUR, @DeploymentTimestamp, Sysdatetime()) > 24
+    IF @EntitiesWithNoData = @CountsRows AND DATEDIFF(HOUR, @DeploymentTimestamp, SYSUTCDATETIME()) > 24
         SET @StatusCode = 3; --No data is present
 
 	  -- Delayed Processing Flow
@@ -118,13 +116,12 @@ SELECT CASE
 
 	MERGE psa.entityinitialcount AS TARGET
 	USING #counts AS SOURCE
-	ON (TARGET.entityname = SOURCE.entityname)
+	ON (TARGET.entityname = SOURCE.entityname COLLATE Latin1_General_100_CI_AS)
 	WHEN MATCHED AND SOURCE.[Count] > TARGET.lastcount
 	THEN
-        UPDATE SET target.lastcount = source.[Count], target.lasttimestamp = Sysdatetime();
+        UPDATE SET target.lastcount = source.[Count], target.lasttimestamp = SYSUTCDATETIME();
 END;
 GO
-
 
 CREATE PROCEDURE psa.sp_get_prior_content AS
 BEGIN

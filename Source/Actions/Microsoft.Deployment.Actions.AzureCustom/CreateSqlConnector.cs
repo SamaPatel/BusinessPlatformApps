@@ -34,7 +34,7 @@ namespace Microsoft.Deployment.Actions.AzureCustom
 
             SubscriptionCloudCredentials creds = new TokenCloudCredentials(subscription, azureToken);
             Microsoft.Azure.Management.Resources.ResourceManagementClient client = new ResourceManagementClient(creds);
-            var registeration = await client.Providers.RegisterAsync("Microsoft.Web");
+            var registration = await client.Providers.RegisterAsync("Microsoft.Web");
 
             dynamic payload = new ExpandoObject();
             payload.properties = new ExpandoObject();
@@ -58,7 +58,7 @@ namespace Microsoft.Deployment.Actions.AzureCustom
             var objOutput = JsonUtility.GetJObjectFromJsonString(output);
             
             // Retry one more time if initial deployment didn't succeed
-            if (objOutput["code"] != null && objOutput["code"].ToString() == "SubscriptionNotFound")
+            if (objOutput["error"] != null && objOutput["error"].Value<string>("code") == "SubscriptionNotFound")
             {
                 Thread.Sleep(new TimeSpan(0, 0, 5));
                 connection = await new AzureHttpClient(azureToken, subscription, resourceGroup).ExecuteWithSubscriptionAndResourceGroupAsync(HttpMethod.Put,

@@ -390,7 +390,7 @@
         "Pages": [
             {
                 "displayname": "Uninstall Progress",
-                "HasNavigated": "`(true)",
+                "HasNavigated": "(true)",
                 "isUninstall": true,
                 "name": "$SiteCommon$/pages-gallery/progress.html",
                 "successMessage": "$translate(INIT_UNINSTALL_SUCCESS)"

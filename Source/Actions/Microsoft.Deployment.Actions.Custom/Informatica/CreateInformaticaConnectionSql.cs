@@ -21,7 +21,10 @@ namespace Microsoft.Deployment.Actions.Custom.Informatica
             string password = request.DataStore.GetValue("InformaticaPassword");
             RestClient rc = await InformaticaUtility.Initialize(username, password);
 
-            bool isWindowsAuth = request.DataStore.GetJson("SqlCredentials", "AuthType").EqualsIgnoreCase("Windows");
+            string sqlUsername = request.DataStore.GetValue("Username");
+            string sqlPassword = request.DataStore.GetValue("Password");
+
+            bool isWindowsAuth =  string.IsNullOrEmpty(sqlUsername) || string.IsNullOrEmpty(sqlPassword);
 
             InformaticaConnectionAzureSql ic = new InformaticaConnectionAzureSql
             {
@@ -56,8 +59,7 @@ namespace Microsoft.Deployment.Actions.Custom.Informatica
             }
             else
             {
-                string sqlUsername = request.DataStore.GetValue("Username");
-                ic.password = request.DataStore.GetValue("Password");
+                ic.password = sqlPassword;
                 ic.username = sqlUsername.Contains("@") ? sqlUsername : sqlUsername + "@" + ic.Host;
             }
 
