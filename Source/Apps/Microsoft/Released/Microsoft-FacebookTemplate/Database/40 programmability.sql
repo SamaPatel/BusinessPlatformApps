@@ -48,36 +48,28 @@ BEGIN TRAN
 DELETE t 
 FROM fb.[Comments] as t
 INNER JOIN fb.StagingComments s 
-ON t.Id1 = s.Id1 AND t.Id2 = s.Id2;
+ON t.Id = s.Id;
 
 
 INSERT INTO fb.[Comments]
 (
-     [Id1]
-	,[Id2]
-	,[Original Id]
+	 [Id]
 	,[Created Date]
 	,[Message]
 	,[From Id]
 	,[From Name]
-	,[Post Id1]
-	,[Post Id2]
-	,[Original Post Id]
+	,[Post Id]
 	,[Page]
     ,[PageDisplayName]
     ,[PageId]
 )
 SELECT DISTINCT
-	 [Id1]
-	,[Id2]
-	,[Original Id]
+	[Id]
 	,[Created Date]
 	,[Message]
 	,[From Id]
 	,[From Name]
-	,[Post Id1]
-	,[Post Id2]
-	,[Original Post Id]
+	,[Post Id]
 	,[Page]
     ,[PageDisplayName]
     ,[PageId]
@@ -91,23 +83,19 @@ BEGIN TRAN
 DELETE t 
 FROM fb.HashTags as t
 INNER JOIN fb.StagingHashTags s 
-ON t.Id1 = s.Id1 AND t.Id2 = s.Id2;
+ON t.Id = s.Id;
 
 INSERT INTO [fb].[HashTags] 
 (
-     [Id1]
-	,[Id2]
-	,[Original Id]
+	[Id]
 	,[HashTags]
 )
 SELECT DISTINCT   
-	 [Id1]
-	,[Id2]
-	,[Original Id]
+	[Id]
 	,[HashTags]
 FROM [fb].[StagingHashTags];
 
-TRUNCATE TABLE [fb].[StagingHashTags];	 	 
+TRUNCATE TABLE [fb].[StagingHashTags];
 COMMIT
 ---------------------Merge KeyPhrases-------------------------------------
 
@@ -115,20 +103,15 @@ BEGIN TRAN
 DELETE t 
 FROM fb.KeyPhrase as t
 INNER JOIN fb.StagingKeyPhrase s 
-ON t.Id1 = s.Id1 AND t.Id2 = s.Id2;
-
+ON t.Id = s.Id;
 INSERT INTO [fb].[KeyPhrase] 
 (
-     [Id1]
-	,[Id2]
-	,[Original Id]
+	[Id]
 	,[KeyPhrase]
 )
     
 SELECT DISTINCT  
-			[Id1]
-		,[Id2]
-		,[Original Id]
+		[Id]
 		,[KeyPhrase]
 	FROM [fb].[StagingKeyPhrase];
 
@@ -139,44 +122,34 @@ BEGIN TRAN
 DELETE t 
 FROM fb.Posts as t
 INNER JOIN fb.StagingPosts s 
-ON t.Id1 = s.Id1 AND t.Id2 = s.Id2;
+ON t.Id = s.Id;
 
 INSERT INTO fb.Posts
 (
-     [Id1]
-	,[Id2]
-	,[Original Id]
+	 [Id]
 	,[Created Date]
 	,[Message]
 	,[From Id]
 	,[From Name]
 	,[Media]
-	,[Total Likes]
-	,[Total Shares]
-	,[Total Reactions]
 	,[Page]
     ,[PageDisplayName]
     ,[PageId]
     ,[Total Comments]
 )
 SELECT DISTINCT
-     [Id1]
-	,[Id2]
-	,[Original Id]
+	 [Id]
 	,[Created Date]
 	,[Message]
 	,[From Id]
 	,[From Name]
 	,[Media]
-	,[Total Likes]
-	,[Total Shares]
-	,[Total Reactions]
 	,[Page]
     ,[PageDisplayName]
     ,[PageId]
 	,[Total Comments]
     FROM fb.StagingPosts
-TRUNCATE TABLE [fb].StagingPosts;	 	 
+TRUNCATE TABLE [fb].StagingPosts;
 COMMIT
 
 ---------------------Merge Reactions-------------------------------------
@@ -184,26 +157,20 @@ BEGIN TRAN
 DELETE t 
 FROM [fb].[Reactions] as t
 INNER JOIN [fb].[StagingReactions] s 
-ON t.Id1 = s.Id1 AND t.Id2 = s.Id2;
+ON t.Id = s.Id;
 
 INSERT INTO [fb].[Reactions]
 (
-        [Id1]
-	,[Id2]
-	,[Original Id]
+	[Id]
 	,[Reaction Type]
-	,[From Id]
-	,[From Name]
+	,[Count]
 )
 SELECT DISTINCT  
-		[Id1]
-	,[Id2]
-	,[Original Id]
+	[Id]
 	,[Reaction Type]
-	,[From Id]
-	,[From Name]
+	,[Count]
 FROM [fb].[StagingReactions]
-TRUNCATE TABLE [fb].[StagingReactions];	 	 
+TRUNCATE TABLE [fb].[StagingReactions];
 COMMIT
 
 ---------------------Merge Sentiment-------------------------------------
@@ -211,19 +178,15 @@ BEGIN TRAN
 DELETE t 
 FROM [fb].[Sentiment] as t
 INNER JOIN [fb].[StagingSentiment] s 
-ON t.Id1 = s.Id1 AND t.Id2 = s.Id2;
+ON t.Id = s.Id;
     
 INSERT INTO [fb].[Sentiment]
 (
-        [Id1]
-	,[Id2]
-	,[Original Id]
+	[Id]
 	,[Sentiment]
 )
 SELECT DISTINCT
-	[Id1]
-	,[Id2]
-	,[Original Id]
+	 [Id]
 	,[Sentiment]
 FROM [fb].[StagingSentiment]
 TRUNCATE TABLE [fb].[StagingSentiment]; 
@@ -252,7 +215,7 @@ INSERT INTO fb.[Edges]
     tbl2.[From Id] as TargetVertex,
     count(1) as EdgeWeight,
     tbl1.[PageId]  as PageId
-    FROM [fb].Comments tbl1 join [fb].Comments tbl2 on tbl1.[Post Id1] = tbl2.[Post Id1] AND tbl1.[Post Id2] = tbl2.[Post Id2]  
+    FROM [fb].Comments tbl1 join [fb].Comments tbl2 on tbl1.[Post Id] = tbl2.[Post Id]
     WHERE tbl1.[From Id] !=  tbl1.[PageId] and tbl2.[From Id] !=  tbl2.[PageId] and tbl1.[From Id] != tbl2.[From Id] 
     group by tbl1.[From Id], tbl2.[From Id], tbl1.[PageId]
     having count(1) > 2 

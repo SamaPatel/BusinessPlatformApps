@@ -10,6 +10,7 @@ using Microsoft.Deployment.Common.Actions;
 using Microsoft.Deployment.Common.Helpers;
 
 using Task = Microsoft.Win32.TaskScheduler.Task;
+using System.Diagnostics;
 
 namespace Microsoft.Deployment.Actions.OnPremise.TaskScheduler
 {
@@ -31,6 +32,11 @@ namespace Microsoft.Deployment.Actions.OnPremise.TaskScheduler
                         {
                             if (task.Name.EqualsIgnoreCase(taskName))
                             {
+                                if (task.State == TaskState.Running || task.State == TaskState.Queued)
+                                {
+                                    task.Stop();
+                                    NTHelper.KillProcess("azurebcp");
+                                }
                                 ts.RootFolder.DeleteTask(taskName, false);
                             }
                         }

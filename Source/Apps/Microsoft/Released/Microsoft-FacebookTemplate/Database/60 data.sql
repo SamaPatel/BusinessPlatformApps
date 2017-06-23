@@ -71,8 +71,4 @@ Begin
 End
 
 COMMIT TRANSACTION;
-
-
-
-
 go

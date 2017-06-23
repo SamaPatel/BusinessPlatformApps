@@ -94,7 +94,7 @@ namespace Microsoft.Deployment.Actions.AzureCustom.AzureSql
                 var operation = operations.Operations.First(p => p.Properties.ProvisioningState == ProvisioningState.Failed);
                 var operationFailed = await client.DeploymentOperations.GetAsync(resourceGroup, deploymentName, operation.OperationId);
 
-                return new ActionResponse(ActionStatus.Failure, JsonUtility.GetJObjectFromObject(operationFailed), null, DefaultErrorCodes.DefaultErrorCode, operationFailed.Operation.Properties.StatusMessage);                
+                return new ActionResponse(ActionStatus.Failure, JsonUtility.GetJObjectFromObject(operationFailed), null, DefaultErrorCodes.DefaultErrorCode, operationFailed.Operation.Properties.StatusMessage);
             }
 
             SqlCredentials credentials = new SqlCredentials()
@@ -110,8 +110,8 @@ namespace Microsoft.Deployment.Actions.AzureCustom.AzureSql
                 DeployedResourceType.SqlServer, CreatedBy.BPST, DateTime.UtcNow.ToString("o"));
 
 
-            request.Logger.LogResource(request.DataStore, database,
-                DeployedResourceType.SqlServer, CreatedBy.BPST, DateTime.UtcNow.ToString("o"), string.Empty, databaseTier);
+            request.Logger.LogResource(request.DataStore, server + "\\" + database,
+                DeployedResourceType.SqlDatabase, CreatedBy.BPST, DateTime.UtcNow.ToString("o"), string.Empty, databaseTier);
 
             var connectionStringResponse = SqlUtility.GetConnectionString(credentials);
             return new ActionResponse(ActionStatus.Success, JsonUtility.CreateJObjectWithValueFromObject(connectionStringResponse), true);

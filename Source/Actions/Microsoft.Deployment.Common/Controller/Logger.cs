@@ -44,7 +44,7 @@ namespace Microsoft.Deployment.Common.Controller
             this.AddToDictionary(this.globalParams, this.telemetryClient.Context.Properties);
         }
 
-        public void LogEvent(string eventName, Dictionary<string, string> properties)
+        public void LogEvent(string eventName, Dictionary<string, string> properties = null)
         {
             this.telemetryClient.TrackEvent(eventName, properties);
             this.Flush();

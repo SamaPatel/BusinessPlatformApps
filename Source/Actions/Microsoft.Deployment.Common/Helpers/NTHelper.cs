@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Microsoft.Win32;
+using System.Diagnostics;
 
 namespace Microsoft.Deployment.Common.Helpers
 {
@@ -81,6 +82,20 @@ namespace Microsoft.Deployment.Common.Helpers
             get
             {
                 return string.Join(".", NTHelper.OsVersionArray);
+            }
+        }
+
+        public static void KillProcess(string processName)
+        {
+            foreach (Process p in Process.GetProcessesByName(processName))
+            {
+                try
+                {
+                    p.Kill();
+                    p.WaitForExit(10000);
+                }
+                catch { }
+
             }
         }
     }

@@ -93,7 +93,7 @@ namespace Microsoft.Deployment.Common.ActionModel
             while (loopException.InnerException != null)
             {
                 loopException = loopException.InnerException;
-                str.Append(".").Append(loopException.Message);
+                str.AppendLine().Append(loopException.Message);
             }
 
             return str.ToString();

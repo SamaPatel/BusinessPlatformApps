@@ -76,29 +76,27 @@ namespace Microsoft.Deployment.Tests.Actions.Facebook
         [TestMethod]
         public async Task DeployFacebookTemplate()
         {
-            var dataStore =  await TestManager.GetDataStore(true);
+            var dataStore =  await TestManager.GetDataStore();
             dataStore.AddToDataStore("FacebookClientId", "422676881457852");
             dataStore.AddToDataStore("FacebookClientSecret", "bf5fca097936ece936290031623b577b");
-            dataStore.AddToDataStore("SqlConnectionString", "Server=tcp:modb1.database.windows.net,1433;Initial Catalog=fb4;Persist Security Info=False;User ID=pbiadmin;Password=Corp123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+            dataStore.AddToDataStore("SqlConnectionString", "Server=tcp:modb1.database.windows.net,1433;Initial Catalog=fb2;Persist Security Info=False;User ID=pbiadmin;Password=Corp123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
             dataStore.AddToDataStore("Schema", "fb");
-          
-
             dataStore.AddToDataStore("SqlServerIndex", "0");
             dataStore.AddToDataStore("SqlScriptsFolder", "Database");
-   
-
+  
             dataStore.AddToDataStore("SqlGroup", "SolutionTemplate");
             dataStore.AddToDataStore("SqlSubGroup", "ETL");
             dataStore.AddToDataStore("SqlEntryName", "PagesToFollow");
             dataStore.AddToDataStore("SqlEntryValue", "dcextendeduniverse,MarvelCinematicUniverse");
             dataStore.AddToDataStore("SqlConfigTable", "fb.configuration");
 
-            ActionResponse response = null;
-
             dataStore.AddToDataStore("DeploymentName", "FunctionDeploymentTest1");
             dataStore.AddToDataStore("CognitiveServiceName", "TextCognitiveService");
             dataStore.AddToDataStore("CognitiveServiceType", "TextAnalytics");
             dataStore.AddToDataStore("CognitiveSkuName", "S1");
+
+            ActionResponse response = null;
+
             response = TestManager.ExecuteAction("Microsoft-DeployCognitiveService", dataStore);
             Assert.IsTrue(response.IsSuccess);
 
@@ -108,39 +106,38 @@ namespace Microsoft.Deployment.Tests.Actions.Facebook
             response = await TestManager.ExecuteActionAsync("Microsoft-WaitForCognitiveService", dataStore, "Microsoft-FacebookTemplate");
             Assert.IsTrue(response.IsSuccess);
 
-            response = await TestManager.ExecuteActionAsync("Microsoft-DeploySQLScripts", dataStore, "Microsoft-FacebookTemplate");
+            response = await TestManager.ExecuteActionAsync("Microsoft-DeploySQLScripts", dataStore, "Microsoft-FacebookTemplateEdits");
             Assert.IsTrue(response.IsSuccess);
 
-            response = await TestManager.ExecuteActionAsync("Microsoft-SetConfigValueInSql", dataStore, "Microsoft-FacebookTemplate");
+            response = await TestManager.ExecuteActionAsync("Microsoft-SetConfigValueInSql", dataStore, "Microsoft-FacebookTemplateEdits");
             Assert.IsTrue(response.IsSuccess);
 
             // Testing to see if the tear down works
-            response = await TestManager.ExecuteActionAsync("Microsoft-DeploySQLScripts", dataStore, "Microsoft-FacebookTemplate");
+            response = await TestManager.ExecuteActionAsync("Microsoft-DeploySQLScripts", dataStore, "Microsoft-FacebookTemplateEdits");
             Assert.IsTrue(response.IsSuccess);
 
-            response = await TestManager.ExecuteActionAsync("Microsoft-SetConfigValueInSql", dataStore, "Microsoft-FacebookTemplate");
+            response = await TestManager.ExecuteActionAsync("Microsoft-SetConfigValueInSql", dataStore, "Microsoft-FacebookTemplateEdits");
             Assert.IsTrue(response.IsSuccess);
 
 
             dataStore.AddToDataStore("DeploymentName", "FunctionDeploymentTest1");
-            dataStore.AddToDataStore("FunctionName", "unittestfunction1154789");
-            dataStore.AddToDataStore("RepoUrl", "https://github.com/MohaaliMicrosoft/FacebookExtraction");
+            dataStore.AddToDataStore("FunctionName", "unittestfunctionmo12");
+            dataStore.AddToDataStore("RepoUrl", "https://github.com/MohaaliMicrosoft/FacebookETL");
             dataStore.AddToDataStore("sku", "Standard");
 
             response = TestManager.ExecuteAction("Microsoft-DeployAzureFunction", dataStore);
             Assert.IsTrue(response.IsSuccess);
 
+            dataStore.AddToDataStore("DeploymentName", "FunctionDeploymentTest1");
+            response = TestManager.ExecuteAction("Microsoft-WaitForArmDeploymentStatus", dataStore);
+            Assert.IsTrue(response.IsSuccess);
 
             dataStore.AddToDataStore("DeploymentName", "FunctionDeploymentTest2");
-            dataStore.AddToDataStore("StorageAccountName", "testmostorage12345678");
+            dataStore.AddToDataStore("StorageAccountName", "testmostorageemoji");
             dataStore.AddToDataStore("StorageAccountType", "Standard_LRS");
             dataStore.AddToDataStore("StorageAccountEncryptionEnabled", "true");
 
             response = TestManager.ExecuteAction("Microsoft-CreateAzureStorageAccount", dataStore);
-            Assert.IsTrue(response.IsSuccess);
-
-            dataStore.AddToDataStore("DeploymentName", "FunctionDeploymentTest1");
-            response = TestManager.ExecuteAction("Microsoft-WaitForArmDeploymentStatus", dataStore);
             Assert.IsTrue(response.IsSuccess);
 
             dataStore.AddToDataStore("DeploymentName", "FunctionDeploymentTest2");

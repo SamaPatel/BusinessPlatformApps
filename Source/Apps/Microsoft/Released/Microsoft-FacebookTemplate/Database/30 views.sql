@@ -10,7 +10,7 @@ CREATE VIEW [fb].[CommentsPostsView] AS
 (
 
 SELECT 
-       [Original Id]
+       [Id]
       ,[Created Date]
       ,CONVERT(date, [Created Date]) AS [Created Date Only]
       ,[Message]
@@ -20,7 +20,7 @@ SELECT
       ,[PageDisplayName]
       ,[PageId]
       ,[media]
-      ,[Original Id] AS [Original Post Id]
+      ,[Id] AS [Post Id]
       ,'Post' AS [Type]
       ,CASE WHEN CONVERT(nvarchar,[From Id]) = [PageId] THEN 'Internal' ELSE 'External' END AS PostType
       ,CASE WHEN CONVERT(nvarchar,[From Id]) = [PageId] THEN '1' ELSE '0' END AS IsPageOwner
@@ -29,7 +29,7 @@ SELECT
   UNION ALL 
 
   SELECT 
-       [Original Id]
+       [Id]
       ,[Created Date]
       ,CONVERT(date, [Created Date]) AS [Created Date Only]
       ,[Message]
@@ -39,9 +39,9 @@ SELECT
       ,[PageDisplayName]
       ,[PageId]
       ,null AS [media]
-      ,[Original Post Id]
+      ,[Post Id]
       ,'Comment' AS [Type]
-      ,'' AS PostType
+      ,CASE WHEN CONVERT(nvarchar,[From Id]) = [PageId] THEN 'Internal' ELSE 'External' END AS PostType
       ,CASE WHEN CONVERT(nvarchar,[From Id]) = [PageId] THEN '1' ELSE '0' END AS IsPageOwner
   FROM [fb].[Comments]
   )
@@ -51,7 +51,7 @@ GO
 CREATE VIEW [fb].[HashTagView] AS (
 
 SELECT
-	[Original Id]
+	[Id]
     ,[HashTags]
 FROM [fb].[HashTags]
 )
@@ -60,7 +60,7 @@ GO
 
 CREATE VIEW [fb].[KeyPhraseView] AS (
 SELECT 
-       [Original Id]
+       [Id]
       ,[KeyPhrase]
 FROM [fb].[KeyPhrase]
 )
@@ -69,28 +69,24 @@ GO
 
 CREATE VIEW [fb].[PostsView] AS (
 SELECT 
-      [Original Id]
-      ,[Total Likes]
-      ,[Total Shares]
-      ,[Total Reactions]
+      [Id]
       ,[Total Comments]
+	  ,CASE WHEN CONVERT(nvarchar,[From Id]) = [PageId] THEN 'Internal' ELSE 'External' END AS PostType
   FROM [fb].[Posts]
   )
-
 
 GO
 
 CREATE VIEW [fb].[ReactionsView] AS (
-SELECT [Original Id]
+SELECT [Id]
       ,[Reaction Type]
-      ,[From Id]
-      ,[From Name]
+      ,[Count]
 FROM [fb].[Reactions]
 )
 GO 
 
 CREATE VIEW [fb].[SentimentView] AS (
-SELECT [Original Id]
+SELECT [Id]
       ,[Sentiment]
 FROM [fb].[Sentiment]
 )
